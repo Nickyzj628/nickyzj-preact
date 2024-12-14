@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* 滚动条 */
+  ::-webkit-scrollbar {
+    @apply w-4 bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply border-4 border-solid border-transparent bg-zinc-400/60 bg-clip-content rounded-full hover:bg-zinc-400;
+  }
+
+  /* 体验优化样式 */
+  html {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    scroll-behavior: smooth;
+  }
+
+  /* 标题 */
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
+
+  h5 {
+    @apply text-base;
+  }
+
+  h6 {
+    @apply text-sm;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-black transition dark:text-zinc-200;
+  }
+
+  /* 多媒体 */
+  img {
+    @apply object-cover transition dark:brightness-90;
+  }
+
+  svg {
+    @apply shrink-0 transition-none dark:brightness-90;
+  }
+
+  video {
+    @apply object-contain outline-none rounded-xl overflow-hidden;
+  }
+
+  /* 交互元素 */
+  a {
+    @apply underline-offset-2 transition hover:underline active:scale-95;
+  }
+
+  button,
+  .button {
+    @apply inline-flex items-center p-2.5 text-zinc-700 outline-none bg-zinc-100 rounded-full transition hover:bg-zinc-200 active:scale-95 disabled:pointer-events-none disabled:opacity-50 dark:text-zinc-300 dark:bg-zinc-700 dark:hover:bg-zinc-600;
+  }
+
+  button.active,
+  .button.active {
+    @apply bg-zinc-200 dark:bg-zinc-600;
+  }
+
+  /* 水平分割线 */
+  hr {
+    @apply my-4 border-[1px] border-zinc-100 rounded-full transition dark:border-zinc-700;
+  }
+
+  /* 表格相关 */
+  th {
+    @apply whitespace-nowrap;
+  }
+
+  /* 文章相关 */
+  blockquote,
+  ::marker {
+    @apply transition;
+  }
+}
+
+@layer components {
+
+  /* bento box */
+  .bento {
+    @apply p-3 bg-white rounded-xl transition dark:bg-zinc-900;
+  }
+
+  /* 垂直分割线 */
+  .divider {
+    @apply w-0.5 h-6 bg-zinc-200/60 rounded-full transition dark:bg-zinc-800/60;
+  }
+
+  /* 徽标 */
+  .badge {
+    @apply px-2.5 py-0.5 text-xs text-zinc-800 bg-zinc-100 rounded-full transition dark:text-zinc-100 dark:bg-zinc-800;
+  }
+}
+
+@layer utilities {
+
+  /* 省略两行以上的内容 */
+  .truncate-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+/* 图片缩放 */
+.medium-zoom-overlay {
+  @apply z-40 !bg-black/60;
+}
+
+.medium-zoom-image--opened {
+  @apply z-50 rounded-lg;
+}

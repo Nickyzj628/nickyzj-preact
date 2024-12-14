@@ -1,0 +1,7 @@
+.section {
+  @apply w-full xs:w-80 lg:w-96 mt-2;
+}
+
+.section:last-of-type {
+  @apply min-w-72 h-[36rem];
+}

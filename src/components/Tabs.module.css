@@ -1,0 +1,5 @@
+.tab {
+  &:has(button:not(:global(.active)):hover) button:global(.active) {
+    background-color: transparent !important;
+  }
+}
