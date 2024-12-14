@@ -2,6 +2,7 @@ import { LeftIcon, SearchIcon } from "@/assets/icons";
 import { capitalize } from "@/utils/string";
 import { ComponentChildren } from "preact";
 import { useEffect, useState } from "preact/hooks";
+import Loading from "./Loading";
 
 type Props = {
   title?: string;
@@ -30,6 +31,8 @@ const Table = ({ title, request, postData, dataKey, actions }: Props) => {
   useEffect(() => {
     fetcher();
   }, [page, keyword]);
+
+  if (!response) return <Loading className="static min-h-96 border rounded-xl transition dark:border-zinc-700" />;
 
   return (
     <div className="flex flex-col border rounded-xl transition dark:border-zinc-700">
