@@ -31,7 +31,9 @@ const Page = () => {
   }, []);
 
   if (error) return <Redirect to="/blogs" />;
+
   if (isLoading && !anime) return <Loading />;
+  
   if (!anime) return <Redirect to="/error" />;
 
   return <>

@@ -64,15 +64,17 @@ const Page = () => {
   });
 
   if (error) return <Redirect to="/blogs" />;
+
   if (isLoading && !blog) return <Loading />;
+
   if (!blog) return <Redirect to="/error" />;
 
   return <>
     {/* banner */}
     <figure className="relative w-full aspect-[18/9] sm:aspect-[28/9] lg:aspect-[32/9] xl:aspect-[40/9] rounded-xl overflow-hidden">
       <Image src={`/Blogs/${id}.webp`} className="size-full" />
-      <figcaption className="absolute top-0 left-0 flex flex-col items-center justify-center gap-0.5 size-full md:pb-16 bg-black/50">
-        <h1 className="mb-3 text-white">{blog.title}</h1>
+      <figcaption className="absolute top-0 left-0 flex flex-col items-center justify-center gap-0.5 size-full md:pb-16 p-3 bg-black/50">
+        <h1 className="mb-3 text-white text-balance text-center">{blog.title}</h1>
         <span className="text-sm text-zinc-200">
           {removeSpaces(dayjs(parseInt(blog.id ?? "", 36)).fromNow())}创建 / {removeSpaces(dayjs(blog.updated).fromNow())}更新
         </span>
