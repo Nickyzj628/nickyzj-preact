@@ -85,7 +85,7 @@ const Page = () => {
     {/* article */}
     <article
       ref={articleRef}
-      className="prose prose-zinc prose-p:space-x-3 prose-img:inline prose-img:max-h-96 prose-img:rounded-xl prose-pre:rounded-xl md:-translate-y-20 p-5 mx-auto rounded-xl shadow-xl bg-white overflow-x-hidden transition dark:prose-invert prose-blockquote:dark:border-s-zinc-500 prose-pre:dark:bg-zinc-900 dark:bg-zinc-700"
+      className="prose prose-zinc prose-img:inline prose-img:max-h-96 prose-img:mr-3 prose-img:mt-0 prose-img:mb-3 prose-img:shadow prose-img:rounded-xl prose-pre:rounded-xl md:-translate-y-20 p-5 mx-auto rounded-xl shadow-xl bg-white overflow-x-hidden transition dark:prose-invert prose-blockquote:dark:border-s-zinc-500 prose-pre:dark:bg-zinc-900 dark:bg-zinc-700"
       dangerouslySetInnerHTML={{ __html: blog.content ?? "" }}
     />
 
