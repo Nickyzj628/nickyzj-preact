@@ -35,7 +35,8 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
     }
   }
 
-  const response = await fetch(`${BASE_URL}:3030${path}`, options);
+  const port = options.port ?? 3030;
+  const response = await fetch(`${BASE_URL}:${port}${path}`, options);
   if (!response.ok) {
     throw new Error(response.statusText);
   }
@@ -46,6 +47,11 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
   }
 
   return data as T;
+};
+
+/** 向`nickyzj.run:2020{path}`发送请求，path以“/”开头 */
+export const alist = async <T>(path: string, options: Recordable = {}) => {
+  return request(path, { ...options, port: 2020 }) as T;
 };
 
 /** 从`nickyzj.run:2020/Photos{path}`获取图片，path以“/”开头 */

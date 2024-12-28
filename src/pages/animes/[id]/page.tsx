@@ -28,7 +28,7 @@ const Page = () => {
     player.onvolumechange = () => {
       localStorage.volume = player.volume;
     };
-  }, []);
+  }, [anime]);
 
   if (error) return <Redirect to="/blogs" />;
 
