@@ -19,11 +19,11 @@ export const useRequest = <T>(
 
   const [data, setData] = useState<T | null>(cache.get(path) ?? null);
   const [error, setError] = useState<Error | null>(null);
-  const [isLoading, setIsLoading] = useState(!data);
+  const [loading, setLoading] = useState(!data);
 
   const reload = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
       const response = await request<T>(path);
       setData(response);
@@ -34,7 +34,7 @@ export const useRequest = <T>(
       else setError(new Error("Unknown error when fetch data using SWR"));
     }
     finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   }, []);
 
@@ -49,5 +49,5 @@ export const useRequest = <T>(
     toast.error(error.message);
   }, [error]);
 
-  return { data, error, isLoading, reload };
+  return { data, error, loading, reload };
 };

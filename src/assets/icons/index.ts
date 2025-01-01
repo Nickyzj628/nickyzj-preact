@@ -23,6 +23,10 @@ import CloseCircleIcon from "./close_circle.svg?react";
 import SearchIcon from "./search.svg?react";
 import LeftIcon from "./left.svg?react";
 
+// placeholder
+import PicIcon from "./pic.svg?react";
+import AlbumIcon from "./album.svg?react";
+
 export {
   NotificationIcon,
   HomeIcon,
@@ -39,4 +43,6 @@ export {
   CloseCircleIcon,
   SearchIcon,
   LeftIcon,
+  PicIcon,
+  AlbumIcon,
 };

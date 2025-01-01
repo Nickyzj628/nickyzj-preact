@@ -1,4 +1,4 @@
-.container {
+.layout {
 
   /* hover其他元素，改变第一个元素 */
   &:has(a:not(:first-of-type):hover) a:first-of-type {

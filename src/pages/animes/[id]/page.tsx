@@ -1,19 +1,34 @@
+import { TvIcon } from "@/assets/icons";
 import Loading from "@/components/Loading";
 import Tabs from "@/components/Tabs";
 import { useRequest } from "@/hooks/useRequest";
 import { clsx, setTitle } from "@/utils";
 import { getAnimeVideo, stringToQuery } from "@/utils/network";
+import { ComponentChildren } from "preact";
 import { useEffect, useMemo, useRef } from "preact/hooks";
-import { Link, Redirect, useParams, useSearch } from "wouter-preact";
+import { Link, useLocation, useParams, useSearch } from "wouter-preact";
+
+type LayoutProps = {
+  children?: ComponentChildren;
+};
+
+const Layout = ({ children }: LayoutProps) => {
+  return (
+    <div className="absolute inset-0 m-auto flex flex-col items-center size-fit text-zinc-400 transition dark:text-zinc-500">
+      {children}
+    </div>
+  )
+};
 
 const Page = () => {
   const { id } = useParams();
   const search = useSearch();
+  const [_location, setLocation] = useLocation();
 
   const ep = useMemo<number>(() => stringToQuery(search).ep ?? 1, [search]);
 
   // 获取番剧详情
-  const { data: anime, isLoading, error } = useRequest<Anime>(`/animes/${id}`);
+  const { data: anime, loading, error } = useRequest<Anime>(`/animes/${id}`);
   useEffect(() => {
     if (!anime) return;
     setTitle(`${anime.title} 第${ep}话`);
@@ -30,11 +45,27 @@ const Page = () => {
     };
   }, [anime]);
 
-  if (error) return <Redirect to="/blogs" />;
+  if (error) return (
+    <Layout>
+      <TvIcon className="w-32" />
+      <span>{error.message}</span>
+      <button className="px-8 py-2 mt-5" onClick={() => setLocation("/animes")}>回到列表</button>
+    </Layout>
+  );
 
-  if (isLoading && !anime) return <Loading />;
-  
-  if (!anime) return <Redirect to="/error" />;
+  if (loading) return (
+    <Layout>
+      <Loading />
+    </Layout>
+  );
+
+  if (!anime) return (
+    <Layout>
+      <TvIcon className="w-32" />
+      <span>空空如也</span>
+      <button className="px-8 py-2 mt-5" onClick={() => setLocation("/animes")}>回到列表</button>
+    </Layout>
+  );
 
   return <>
     <video
