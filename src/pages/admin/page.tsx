@@ -38,7 +38,7 @@ const Page = () => {
             placeholder="上传封面"
             className="px-2 py-1.5 rounded-xl text-sm whitespace-nowrap"
             onChange={(formData) => {
-              uploadBanner(`blogs/${blog.id}`, formData)
+              uploadBanner(`/blogs/${blog.id}`, formData)
                 .then(() => toast.success("上传成功"))
                 .catch((err) => toast.error(err.message));
             }}
@@ -65,7 +65,7 @@ const Page = () => {
             placeholder="上传封面"
             className="px-2 py-1.5 rounded-xl text-sm whitespace-nowrap"
             onChange={(formData) => {
-              uploadBanner(`animes/${anime.id}`, formData)
+              uploadBanner(`/animes/${anime.id}`, formData)
                 .then(() => toast.success("上传成功"))
                 .catch((err) => toast.error(err.message));
             }}
