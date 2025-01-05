@@ -60,7 +60,7 @@ const Animes = ({ className }: Props) => {
   const isEmpty = groupedAnimes.length === 0;
 
   const getTime = useCallback((diffDay: number) => {
-    if (diffDay > DAY_LOCALE_STRING.length) return `${diffDay}天前`;
+    if (diffDay >= DAY_LOCALE_STRING.length) return `${diffDay}天前`;
     return DAY_LOCALE_STRING[diffDay];
   }, []);
 

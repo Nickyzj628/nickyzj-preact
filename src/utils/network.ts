@@ -85,6 +85,7 @@ export const setBlog = async (blog: Partial<Blog>) => {
 
 export const uploadBanner = async (path: string, formData: FormData) => {
   return await request<Resp>(path, {
+    method: "PUT",
     body: formData,
   });
 };
