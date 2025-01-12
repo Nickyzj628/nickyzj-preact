@@ -1,54 +1,117 @@
 import Card from "@/components/Card";
 import Loading from "@/components/Loading";
-import { clsx, observe, removeSpaces } from "@/utils";
+import { useHitBottom, useSize, useWindowSize } from "@/hooks/dom";
+import { removeSpaces } from "@/utils";
 import { getAnimes, getImage } from "@/utils/network";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useContainerPosition, useMasonry, usePositioner, useResizeObserver, useScroller } from "masonic";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import { Link } from "wouter-preact";
 
 type DiffedAnime = Anime & { diff: string };
 
-const Page = () => {
-  const loadRef = useRef<HTMLDivElement>(null);
-  const pageRef = useRef(0);
-  const [animes, setAnimes] = useState<DiffedAnime[]>();
+type AnimeMasonryItem = {
+  index: number;
+  width: number;
+  data: DiffedAnime;
+};
 
+const Anime = ({ index, width, data: anime }: AnimeMasonryItem) => {
+  const height = useMemo(() => {
+    if (index % 2) return width / 0.65;
+    return width / 0.7;
+  }, [width]);
+
+  return (
+    <Link href={`/animes/${anime.id}`} className="flex" style={{ height }}>
+      <Card
+        image={getImage(`/animes/${anime.id}.webp`)}
+        title={anime.title}
+        description={`第${anime.eps}话`}
+        extra={`${anime.diff}更新`}
+        titleClassName="text-base sm:text-lg text-pretty"
+      />
+    </Link>
+  );
+};
+
+const Page = () => {
+  const [animes, setAnimes] = useState<DiffedAnime[]>([]);
+
+  // 瀑布流定位
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width: windowWidth } = useWindowSize();
+  const columnCount = useMemo(() => {
+    if (windowWidth < 640) return 2;
+    if (windowWidth < 768) return 3;
+    if (windowWidth < 1024) return 4;
+    if (windowWidth < 1280) return 5;
+    if (windowWidth < 1536) return 5;
+    if (windowWidth < 1728) return 6;
+    return 7;
+  }, [windowWidth]);
+  const { width, height } = useSize(containerRef);
+  const { offset } = useContainerPosition(containerRef, [height]);
+  const { scrollTop, isScrolling } = useScroller(offset);
+  const positioner = usePositioner({
+    width,
+    columnCount,
+    columnGutter: 12,
+    rowGutter: 12,
+  });
+  const resizeObserver = useResizeObserver(positioner);
+
+  // 使用瀑布流
+  const masonry = useMasonry({
+    containerRef,
+    scrollTop,
+    isScrolling,
+    height,
+    positioner,
+    resizeObserver,
+    items: animes,
+    itemKey: (anime) => anime.id,
+    render: Anime,
+  });
+
+  // 滚动翻页
+  const isHitBottom = useHitBottom(containerRef, {
+    thresholdPercent: 0.8,
+  });
+  const pageRef = useRef(0);
+  const pagesRef = useRef(1);
   useEffect(() => {
-    if (!loadRef.current) return;
-    const ob = observe(loadRef.current, async () => {
-      const res = await getAnimes({
-        page: ++pageRef.current,
-      });
+    if (!isHitBottom) return;
+
+    const { current: page } = pageRef;
+    const { current: pages } = pagesRef;
+    if (page === pages) return;
+
+    getAnimes({ page: page + 1, }).then((res) => {
+      pageRef.current = res.page;
+      pagesRef.current = res.pages;
       setAnimes((prev) => [
         ...prev ?? [],
-        ...res.animes
-          .map((anime) => ({ ...anime, diff: removeSpaces(dayjs(anime.updated).fromNow()) }))
+        ...res.animes.map((anime) => ({
+          ...anime,
+          diff: removeSpaces(dayjs(anime.updated).fromNow())
+        })),
       ]);
-      return pageRef.current < res.pages;
     });
+  }, [isHitBottom]);
+
+  // 清理翻页参数
+  useEffect(() => {
     return () => {
+      pageRef.current = 0;
+      pagesRef.current = 1;
       setAnimes([]);
-      ob.disconnect();
     };
   }, []);
 
   return <>
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 w-full">
-      {!animes && (
-        <Loading />
-      )}
-      {animes && animes.map((anime, i) => (
-        <Link key={anime.id} href={`/animes/${anime.id}`} className={clsx(i === 0 && "col-span-2 row-span-2")}>
-          <Card
-            image={getImage(`/animes/${anime.id}.webp`)}
-            title={anime.title}
-            description={`第${anime.eps}话 / ${anime.diff}`}
-            titleClassName="text-base sm:text-lg text-pretty"
-          />
-        </Link>
-      ))}
-    </div>
-    <div ref={loadRef} className="absolute bottom-80 pointer-events-none" />
+    {animes.length === 0 && <Loading />}
+    {masonry}
   </>;
 };
 

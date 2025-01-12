@@ -49,11 +49,6 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
   return data as T;
 };
 
-/** 向`nickyzj.run:2020{path}`发送请求，path以“/”开头 */
-export const alist = async <T>(path: string, options: Recordable = {}) => {
-  return request(path, { ...options, port: 2020 }) as T;
-};
-
 /** 从`nickyzj.run:2020/Photos{path}`获取图片，path以“/”开头 */
 export const getImage = (path: string) => {
   return `${BASE_URL}:2020/d/Nickyzj/Photos/${path}`;

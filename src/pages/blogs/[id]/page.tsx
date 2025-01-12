@@ -3,7 +3,7 @@ import Image from "@/components/Image";
 import Loading from "@/components/Loading";
 import Toggle from "@/components/Toggle";
 import { useRequest } from "@/hooks/useRequest";
-import useZoom from "@/hooks/useZoom";
+import useZoom from "@/hooks/dom/useZoom";
 import { clsx, removeSpaces, setTitle } from "@/utils";
 import dayjs from "dayjs";
 import { ComponentChildren } from "preact";

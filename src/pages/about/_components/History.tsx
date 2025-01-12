@@ -1,6 +1,6 @@
 import Image from "@/components/Image";
 import Timeline from "@/components/Timeline";
-import useZoom from "@/hooks/useZoom";
+import useZoom from "@/hooks/dom/useZoom";
 import { useMemo, useRef } from "preact/hooks";
 
 const History = () => {

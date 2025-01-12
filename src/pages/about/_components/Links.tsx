@@ -1,6 +1,6 @@
 import Card from "@/components/Card";
 import Title from "@/components/Title";
-import useScrollX from "@/hooks/useScrollX";
+import useScrollX from "@/hooks/dom/useScrollX";
 import { useMemo, useRef } from "preact/hooks";
 
 const Links = () => {
