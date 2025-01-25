@@ -11,7 +11,7 @@ const Page = () => {
       <div>
         <span className="text-sm text-zinc-500 transition dark:text-zinc-400">nickyzj2019@qq.com</span>
         <h1 className="my-0.5">杨智杰</h1>
-        <span className="text-sm text-zinc-500 transition dark:text-zinc-400">23岁 · TypeScript · 前端试用生</span>
+        <span className="text-sm text-zinc-500 transition dark:text-zinc-400">24岁 · JavaScript · 前端试用生</span>
       </div>
     </div>
 
