@@ -1,6 +1,6 @@
 import { debounce } from "@/utils";
 import { RefObject } from "preact";
-import { useLayoutEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 
 /** 获取元素实时宽高 */
 const useSize = (ref: RefObject<HTMLElement>) => {
@@ -9,7 +9,7 @@ const useSize = (ref: RefObject<HTMLElement>) => {
     height: 0,
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const { current: el } = ref;
     if (!el) return;
 
@@ -18,7 +18,7 @@ const useSize = (ref: RefObject<HTMLElement>) => {
         width: el.clientWidth,
         height: el.clientHeight,
       });
-    }));
+    }, 50));
     resizeObserver.observe(el);
     return () => {
       resizeObserver.disconnect();

@@ -1,5 +1,4 @@
 import Card from "@/components/Card";
-import Loading from "@/components/Loading";
 import { useHitBottom, useSize, useWindowSize } from "@/hooks/dom";
 import { removeSpaces } from "@/utils";
 import { getAnimes, getImage } from "@/utils/network";
@@ -22,6 +21,13 @@ const Anime = ({ index, width, data: anime }: AnimeMasonryItem) => {
     return width / 0.7;
   }, [width]);
 
+  if (!anime.title) return (
+    <div
+      className="flex bg-zinc-100 rounded-xl"
+      style={{ height }}
+    />
+  )
+
   return (
     <Link href={`/animes/${anime.id}`} className="flex" style={{ height }}>
       <Card
@@ -36,7 +42,13 @@ const Anime = ({ index, width, data: anime }: AnimeMasonryItem) => {
 };
 
 const Page = () => {
-  const [animes, setAnimes] = useState<DiffedAnime[]>([]);
+  // @ts-ignore
+  const [animes, setAnimes] = useState<DiffedAnime[]>(Array
+    .from({ length: 12 })
+    .map((_, index) => ({
+      id: index,
+    }))
+  );
 
   // 瀑布流定位
   const containerRef = useRef<HTMLDivElement>(null);
@@ -81,21 +93,22 @@ const Page = () => {
   const pageRef = useRef(0);
   const pagesRef = useRef(1);
   useEffect(() => {
-    if (!isHitBottom) return;
-
     const { current: page } = pageRef;
     const { current: pages } = pagesRef;
+    if (!isHitBottom && page > 0) return;
     if (page === pages) return;
 
     getAnimes({ page: page + 1, }).then((res) => {
       pageRef.current = res.page;
       pagesRef.current = res.pages;
-      setAnimes((prev) => [
+      const newAnimes = res.animes.map((anime) => ({
+        ...anime,
+        diff: removeSpaces(dayjs(anime.updated).fromNow())
+      }));
+      if (page === 0) setAnimes(newAnimes);
+      else setAnimes((prev) => [
         ...prev ?? [],
-        ...res.animes.map((anime) => ({
-          ...anime,
-          diff: removeSpaces(dayjs(anime.updated).fromNow())
-        })),
+        ...newAnimes,
       ]);
     });
   }, [isHitBottom]);
@@ -109,10 +122,7 @@ const Page = () => {
     };
   }, []);
 
-  return <>
-    {animes.length === 0 && <Loading />}
-    {masonry}
-  </>;
+  return masonry;
 };
 
 export default Page;

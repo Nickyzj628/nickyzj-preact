@@ -1,4 +1,3 @@
-import { debounce } from "@/utils";
 import { useLayoutEffect, useState } from "preact/hooks";
 
 /** 获取窗口实时宽高 */
@@ -9,12 +8,12 @@ const useWindowSize = () => {
   });
 
   useLayoutEffect(() => {
-    const onResize = debounce(() => {
+    const onResize = () => {
       setSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
-    });
+    }
     onResize();
     window.addEventListener("resize", onResize);
     window.addEventListener("orientationchange", onResize);

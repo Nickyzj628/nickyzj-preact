@@ -17,6 +17,6 @@ const Page = () => {
     <Blogs className={styles.section} />
     <Animes className={styles.section} />
   </>;
-}
+};
 
 export default Page;
