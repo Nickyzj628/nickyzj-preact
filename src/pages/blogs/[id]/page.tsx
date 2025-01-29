@@ -109,7 +109,9 @@ const Page = () => {
           <span className="text-sm text-zinc-200">
             {removeSpaces(dayjs(parseInt(blog.id ?? "", 36)).fromNow())}创建 / {removeSpaces(dayjs(blog.updated).fromNow())}更新
           </span>
-          <span className="text-sm text-zinc-200">全篇约{blog.minutes ?? 0}分钟</span>
+          <span className="text-sm text-zinc-200">
+            全篇约{blog.minutes ?? 0}分钟 / {blog.content?.length ?? 0}字符
+          </span>
         </figcaption>
       </figure>
 
