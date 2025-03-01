@@ -62,8 +62,9 @@ const Page = () => {
     if (windowWidth < 1728) return 6;
     return 7;
   }, [windowWidth]);
-  const { width, height } = useSize(containerRef);
-  const { offset } = useContainerPosition(containerRef, [height]);
+  const { width } = useSize(containerRef);
+  const height = window.innerHeight;
+  const { offset } = useContainerPosition(containerRef);
   const { scrollTop, isScrolling } = useScroller(offset);
   const positioner = usePositioner({
     width,
