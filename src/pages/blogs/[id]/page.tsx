@@ -10,7 +10,6 @@ import { ComponentChildren } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { useLocation, useParams } from "wouter-preact";
 import "./hljs.css";
-import { getImage } from "@/utils/network";
 
 type LayoutProps = {
   children?: ComponentChildren;
@@ -111,7 +110,7 @@ const Page = () => {
             {removeSpaces(dayjs(parseInt(blog.id ?? "", 36)).fromNow())}创建 / {removeSpaces(dayjs(blog.updated).fromNow())}更新
           </span>
           <span className="text-sm text-zinc-200">
-            全篇约{blog.minutes ?? 0}分钟 / {blog.content?.length ?? 0}字符
+            全篇约{blog.minutes ?? 0}分钟 / {(blog.content?.length ?? 0)>>1}字符
           </span>
         </figcaption>
       </figure>
