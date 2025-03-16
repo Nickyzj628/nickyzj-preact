@@ -10,6 +10,7 @@ import { ComponentChildren } from "preact";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { useLocation, useParams } from "wouter-preact";
 import "./hljs.css";
+import { getImage } from "@/utils/network";
 
 type LayoutProps = {
   children?: ComponentChildren;
