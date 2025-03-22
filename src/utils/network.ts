@@ -51,7 +51,7 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
 
 /** 从`nickyzj.run:2020/Photos{path}`获取图片，path以“/”开头 */
 export const getImage = (path: string) => {
-  return `${BASE_URL}:2020/d/Nickyzj/Photos/${path}`;
+  return `${BASE_URL}:2020/d/Nickyzj/Photos${path}`;
 };
 
 /** 从`nickyzj.run:2020/Nickyzj/Animes/{...anime}/{ep}`获取番剧播放地址 */
