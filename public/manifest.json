@@ -1,8 +1,20 @@
 {
   "name": "NICKYZJ PREACT PWA",
+  "short_name": "NICKYZJ PWA",
   "icons": [
     {
-      "src": "favicon.webp"
+      "src": "favicon-192x192.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "favicon-512x512.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
     }
-  ]
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f4f5",
+  "theme_color": "#f4f4f5"
 }

@@ -46,7 +46,7 @@ const fetchAndPutCache = async (request) => {
 };
 
 /**
- * 优先使用缓存，并在后台重新请求+更新缓存。如果请求不在缓存白名单中，该函数就只是个fetch()
+ * 优先使用缓存，并在后台重新请求+更新缓存
  * @param {RequestInfo | URL} request
  * @returns {Response}
  */
@@ -69,10 +69,9 @@ const cacheFirst = async (request) => {
   }
 
   // 如果还没有缓存，就做一次fetch
-  console.log(`资源 ${request.url} 还未进入缓存，发送请求`);
-  // 如果没有匹配到缓存，列出所有缓存键
   const cache = await caches.open(CACHE_NAME);
   const keys = await cache.keys();
-  console.log("已缓存的资源", keys.map((req) => req.url));
+  console.log(`资源 ${request.url} 还未进入缓存，即将发送请求`);
+  console.log("目前已缓存的资源", keys.map((req) => req.url));
   return await fetchAndPutCache(request);
 };
