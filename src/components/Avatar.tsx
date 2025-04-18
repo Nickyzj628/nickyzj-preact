@@ -1,6 +1,6 @@
-import { getImage } from "@/utils/network";
+import { getImage } from "@/helpers/network";
+import { clsx } from "@/helpers/string";
 import { useState } from "preact/hooks";
-import { twMerge } from "tailwind-merge";
 
 type Props = {
   name?: string;
@@ -18,8 +18,8 @@ const Avatar = ({ name = "Guest", className }: Props) => {
   return (
     <img
       src={getImage(`/Avatars/${_name}.webp`)}
-      alt=""
-      className={twMerge("no-zoom size-12 rounded-full", className)}
+      alt={_name}
+      className={clsx("no-zoom size-12 rounded-full", className)}
       onError={onError}
     />
   );

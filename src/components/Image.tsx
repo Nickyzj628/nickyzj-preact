@@ -1,17 +1,18 @@
+import { getImage } from "@/helpers/network";
 import { useEffect, useState } from "preact/hooks";
-import { getImage } from "../utils/network";
 
 type Props = {
-  src?: string;
+  src: string;
+  alt?: string;
   className?: string;
 }
 
 /** 处理`http`和`/`开头的图片地址，返回具有对应`src`的`img`元素 */
-const Image = ({ src, className }: Props) => {
-  const [mySrc, setMySrc] = useState("");
+const Image = ({ src, alt, className }: Props) => {
+  const [_src, setSrc] = useState("");
 
   const onError = () => {
-    setMySrc(getImage("/default.webp"));
+    setSrc(getImage("/default.webp"));
   };
 
   useEffect(() => {
@@ -19,21 +20,22 @@ const Image = ({ src, className }: Props) => {
       return;
     }
     if (src.startsWith("http")) {
-      setMySrc(src);
-    }
-    else if (src.startsWith("/")) {
-      setMySrc(getImage(src));
+      setSrc(src);
+    } else if (src.startsWith("/")) {
+      setSrc(getImage(src));
+    } else if (src.startsWith("data:image/")) {
+      setSrc(src);
     }
   }, [src]);
 
-  if (!mySrc) {
+  if (!_src) {
     return null;
   }
 
   return (
     <img
-      src={mySrc}
-      alt=""
+      src={_src}
+      alt={alt}
       className={className}
       onError={onError}
     />

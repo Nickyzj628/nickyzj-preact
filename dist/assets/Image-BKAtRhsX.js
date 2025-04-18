@@ -1,1 +1,0 @@
-import{f as o,y as s,g as a,u as f}from"./index-BAvY3pQe.js";const u=({src:t,className:i})=>{const[r,e]=o(""),n=()=>{e(a("/default.webp"))};return s(()=>{t&&(t.startsWith("http")?e(t):t.startsWith("/")&&e(a(t)))},[t]),r?f("img",{src:r,alt:"",className:i,onError:n}):null};export{u as I};

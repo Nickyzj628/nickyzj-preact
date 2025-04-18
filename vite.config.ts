@@ -1,9 +1,8 @@
-import path from "path";
 import preact from "@preact/preset-vite";
-import { defineConfig } from "vite";
-import svgr from "vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
-import collectAssets from "./vite-plugin-collect-assets";
+import path from "path";
+import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,7 +11,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  plugins: [preact(), tailwindcss(), svgr(), collectAssets()],
+  plugins: [
+    tailwindcss(),
+    preact(),
+    visualizer({
+      open: true,
+      filename: "dist/stats.html",
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   build: {
     outDir: "D:/nginx/html",
   },

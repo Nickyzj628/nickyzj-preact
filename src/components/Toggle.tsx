@@ -1,6 +1,5 @@
-import { clsx } from "@/utils";
+import { clsx } from "@/helpers/string";
 import { useEffect, useState } from "preact/hooks";
-import { twMerge } from "tailwind-merge";
 
 type Props = {
   value?: boolean;
@@ -10,25 +9,40 @@ type Props = {
 
 const Toggle = ({ value, className, onChange }: Props) => {
   const [isClicked, setIsClicked] = useState(false);
+
   const onClick = () => {
     const next = !isClicked;
     setIsClicked(next);
     onChange?.(next);
   };
-  const onBlur = () => {
-    setIsClicked(false);
-    onChange?.(false);
-  };
+
   useEffect(() => {
     setIsClicked(value === true);
   }, [value]);
 
   return (
-    <button className={twMerge("flex-col justify-center gap-2 size-10 px-3", className)} onClick={onClick} onBlur={onBlur}>
-      <div className={clsx("w-full h-0.5 rounded-full bg-zinc-600 transition dark:bg-zinc-300", isClicked && "translate-y-[5px] rotate-45")} />
-      <div className={clsx("w-full h-0.5 rounded-full bg-zinc-600 transition dark:bg-zinc-300", isClicked && "-translate-y-[5px] -rotate-45")} />
+    <button
+      className={clsx("flex-col justify-center gap-2 size-10 px-3", className)}
+      onClick={onClick}
+    >
+      <div className={clsx("w-full transition", isClicked && "translate-y-[5px]")}>
+        <div
+          className={clsx(
+            "w-full h-0.5 rounded-full bg-neutral-600 transition dark:bg-neutral-300",
+            isClicked && "rotate-45"
+          )}
+        />
+      </div>
+      <div className={clsx("w-full transition", isClicked && "translate-y-[-5px]")}>
+        <div
+          className={clsx(
+            "w-full h-0.5 rounded-full bg-neutral-600 transition dark:bg-neutral-300",
+            isClicked && "-rotate-45"
+          )}
+        />
+      </div>
     </button>
-  )
+  );
 };
 
 export default Toggle;

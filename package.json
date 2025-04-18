@@ -1,31 +1,30 @@
 {
-  "name": "nickyzj_preact",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc -b && vite build --emptyOutDir",
+    "build": "vite build --emptyOutDir",
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "@preact/signals": "^2.0.1",
-    "@tailwindcss/vite": "^4.0.9",
+    "@nanostores/preact": "^1.0.0",
+    "@nanostores/query": "^0.3.4",
+    "@nanostores/router": "^1.0.0",
+    "@tailwindcss/vite": "^4.1.4",
     "dayjs": "^1.11.13",
-    "masonic": "^4.0.1",
     "medium-zoom": "^1.1.0",
-    "preact": "^10.26.4",
-    "tailwind-merge": "^3.0.2",
-    "wouter-preact": "^3.6.0"
+    "nanostores": "^1.0.1",
+    "preact": "^10.26.5",
+    "tailwindcss": "^4.1.4"
   },
   "devDependencies": {
+    "@iconify-json/mingcute": "^1.2.3",
+    "@iconify/tailwind4": "^1.0.6",
     "@preact/preset-vite": "^2.10.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
-    "@types/node": "^22.13.8",
-    "tailwindcss": "^4.0.9",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.0",
-    "vite-plugin-svgr": "^4.3.0"
+    "rollup-plugin-visualizer": "^5.14.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.2.6"
   }
 }

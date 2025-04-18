@@ -1,96 +1,99 @@
-import { AlertIcon, CheckCircleIcon, CloseCircleIcon, InformationIcon } from "@/assets/icons";
-import { delay } from "@/utils";
-import { batch, signal } from "@preact/signals";
-import { useEffect, useRef } from "preact/hooks";
+import pubsub from "@/helpers/pubsub";
+import { clsx } from "@/helpers/string";
+import { $toasts } from "@/stores/toast";
+import { useStore } from "@nanostores/preact";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
-type Toast = {
-  id: string;
-  type: "success" | "info" | "warning" | "error";
-  message: string;
-}
+const Toast = ({ id, type, message, lifecycle }: Toast) => {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-const toasts = signal<Toast[]>([]);
-const toastsHeight = signal(0);
-
-/** 创建一条通知 */
-export const toast = (message: string, type: Toast["type"] = "info") => {
-  const newToast = {
-    id: Date.now().toString(36),
-    type,
-    message,
-  }
-  toasts.value = [...toasts.value, newToast];
-};
-toast.success = (message: string) => toast(message, "success");
-toast.warning = (message: string) => toast(message, "warning");
-toast.error = (message: string) => toast(message, "error");
-
-const Toast = ({ type, message }: Toast) => {
-  const ref = useRef<HTMLDivElement>(null);
-
+  const [translateY, setTranslateY] = useState(32);
   useEffect(() => {
-    const dom = ref.current;
-    if (!dom) return;
-    // 将自身高度累加给toastsHeight，以实现Toaster动态高度
-    toastsHeight.value = toastsHeight.value + dom.offsetHeight;
-    // 假隐藏
-    delay(4000).then(() => {
-      dom.style.opacity = "0";
-      // 真隐藏
-      delay().then(() => {
-        dom.style.display = "none";
+    /**
+     * 进入视图前：
+     * 1. 往下位移一段距离，准备飞入
+     * 2. 获取 DOM 高度，通知其他 Toast 向上位移，让出空间
+     */
+    if (lifecycle === "beforeEnter") {
+      setTranslateY(32);
+
+      const { current: container } = containerRef;
+      if (!container) return;
+
+      const height = container.clientHeight;
+      pubsub.publish("newToastEntered", {
+        id,
+        height,
       });
-    });
-  }, []);
+      return;
+    }
+
+    /**
+     * 从视图移除前：
+     * 1. 往上位移一段距离
+     */
+    if (lifecycle === "beforeExit") {
+      setTranslateY((prev) => prev - 32);
+      return;
+    }
+
+    /**
+     * 进入视图后：
+     * 1. 重置位移距离
+     * 2. 监听后续 Toast 进入事件，做相应位移
+     */
+    setTranslateY(0);
+
+    const handleNewToast = (toast: Recordable) => {
+      setTranslateY((prev) => prev - toast.height - 16);
+    };
+
+    const unsubscribe = pubsub.subscribe("newToastEntered", handleNewToast);
+    return () => unsubscribe();
+  }, [lifecycle]);
+
+  const Icon = useCallback(() => {
+    switch (type) {
+      case "success":
+        return <span class="icon-[mingcute--check-circle-line] shrink-0 size-6 text-green-500" />;
+      case "info":
+        return <span class="icon-[mingcute--information-line] shrink-0 size-6 text-blue-500" />;
+      case "warning":
+        return <span class="icon-[mingcute--warning-line] shrink-0 size-6 text-yellow-500" />;
+      case "error":
+        return <span class="icon-[mingcute--close-circle-line] shrink-0 size-6 text-red-500" />;
+    }
+  }, [type]);
 
   return (
-    <div ref={ref} className="flex items-center gap-3 w-fit p-3 rounded-xl shadow-xl bg-white transition dark:bg-zinc-800">
-      {type === "success" && <CheckCircleIcon className="size-6 text-green-500" />}
-      {type === "info" && <InformationIcon className="size-6 text-blue-500" />}
-      {type === "warning" && <AlertIcon className="size-6 text-yellow-500" />}
-      {type === "error" && <CloseCircleIcon className="size-6 text-red-500" />}
-      <span className="text-zinc-800 dark:text-zinc-200">{message}</span>
+    <div
+      ref={containerRef}
+      className={clsx(
+        "absolute bottom-0 right-0 flex gap-3 p-3 rounded-xl shadow-xl bg-white transition dark:bg-zinc-800",
+        lifecycle !== "entered" && "opacity-0",
+      )}
+      style={{
+        transform: `translateY(${translateY}px)`,
+      }}
+    >
+      <Icon />
+      <span className="text-zinc-800 transition dark:text-zinc-200">
+        {message}
+      </span>
     </div>
   )
 };
 
 const Toaster = () => {
-  const ref = useRef<HTMLDivElement>(null);
-
-  // 容器高度回到0时清空状态
-  useEffect(() => {
-    if (!ref.current) return;
-    let isFirst = true;
-    const ob = new ResizeObserver(([entry]) => {
-      const target = entry.target as HTMLDivElement;
-      if (target.offsetHeight !== 0) return;
-      // 修复第一个元素加入时offsetHeight=0仍会清空状态的问题
-      if (target.children.length === 1 && isFirst) {
-        isFirst = false;
-        return;
-      }
-      isFirst = true;
-      batch(() => {
-        toastsHeight.value = 0;
-        toasts.value = [];
-      })
-    });
-    ob.observe(ref.current);
-  }, []);
+  const toasts = useStore($toasts);
 
   return (
-    <div
-      ref={ref}
-      className="fixed bottom-3 right-3 z-40 flex flex-col items-end gap-3 w-96 transition-all"
-      style={{
-        maxHeight: toastsHeight.value + ((toasts.value.length || 1) - 1) * 12,
-      }}
-    >
-      {toasts.value.map((toast) => (
+    <div className="fixed bottom-3 right-3 z-40 w-80">
+      {toasts.map((toast) => (
         <Toast key={toast.id} {...toast} />
       ))}
     </div>
-  )
+  );
 };
 
 export default Toaster;
