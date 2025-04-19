@@ -45,9 +45,9 @@ const RecentBlogs = () => {
   if (error) {
     return (
       <Container bodyClassName="items-center justify-center">
-        <div className="text-center">
+        <div>
           <div className="icon-[mingcute--pic-line] size-32" />
-          <span>{error.message}</span>
+          <p className="text-center">{error.message}</p>
         </div>
       </Container>
     );
