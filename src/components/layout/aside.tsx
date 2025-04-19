@@ -42,8 +42,8 @@ const Aside = () => {
       {/* routes */}
       <nav
         className={clsx(
-          "sticky top-3 flex flex-col gap-3",
-          !isAsideFold && "lg:gap-4",
+          "sticky top-3 flex flex-col gap-2.5",
+          !isAsideFold && "lg:gap-3.5",
         )}
       >
         {routes

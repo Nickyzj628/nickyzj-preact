@@ -36,21 +36,21 @@ const Page = ({ page = 1 }: Partial<AnimesParams>) => {
   return (
     <>
       {data.animes.map((anime, i) => {
-        const isBig = i === 0;
+        const isLatestAnime = page === 1 && i === 0;
         return (
           <a
             key={anime.id}
             href={`/animes/${anime.id}`}
-            className={clsx("flex aspect-[2/3]", isBig && "md:col-span-2 md:row-span-2")}
+            className={clsx("flex aspect-[2/3]", isLatestAnime && "md:col-span-2 md:row-span-2")}
           >
             <Figure className="size-full">
               <Figure.Image src={`/Animes/${anime.id}.webp`} alt={anime.title} />
               <Figcaption>
-                <Figcaption.Title className={clsx("text-base text-pretty", isBig && "md:text-lg")}>
+                <Figcaption.Title className={clsx("text-base text-pretty", isLatestAnime && "md:text-lg")}>
                   {anime.title}
                 </Figcaption.Title>
                 <Figcaption.Description>
-                  {anime.eps}话 / {fromNow(parseInt(anime.id, 36))}
+                  {anime.eps}话 / {fromNow(anime.updated)}
                 </Figcaption.Description>
                 <Figcaption.Extra>
                   收录于{anime.cate}
@@ -77,7 +77,7 @@ const Page = ({ page = 1 }: Partial<AnimesParams>) => {
 
 const Pages = () => {
   return (
-    <div className="relative grid flex-1 grid-cols-2 md:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8 gap-3">
+    <div className="relative grid flex-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-3">
       <Page page={1} />
     </div>
   );
