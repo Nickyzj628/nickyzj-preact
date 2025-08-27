@@ -38,6 +38,7 @@ const BlogEditDrawer = ({ data, isOpen, onClose }: Props) => {
       const hasChangedBanner = banner !== `/Blogs/${id}.webp`;
       await mutate({
         id,
+        title,
         visibility,
         banner: hasChangedBanner ? banner : undefined,
       });

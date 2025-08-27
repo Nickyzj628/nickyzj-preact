@@ -68,7 +68,8 @@ type BlogResp = Resp & Blog;
 
 type BlogMutationBody = {
   id: string;
-  visibility?: number;
+  title: string;
+  visibility: number;
   banner?: string;
 };
 
