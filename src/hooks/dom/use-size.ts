@@ -1,36 +1,36 @@
 import { useState, useCallback, useEffect } from "preact/hooks";
 
 export const useSize = () => {
-  const [element, setElement] = useState<HTMLElement | null>(null);
-  const elementRef = useCallback((node: HTMLElement | null) => {
-    setElement(node);
-  }, []);
+    const [element, setElement] = useState<HTMLElement | null>(null);
+    const elementRef = useCallback((node: HTMLElement | null) => {
+        setElement(node);
+    }, []);
 
-  const [size, setSize] = useState({
-    width: 0,
-    height: 0,
-  });
-
-  useEffect(() => {
-    if (!element) return;
-
-    const updateSize = () => {
-      const rect = element.getBoundingClientRect();
-      setSize({
-        width: parseFloat(rect.width.toFixed(2)),
-        height: parseFloat(rect.height.toFixed(2)),
-      });
-    };
-
-    const resizeObserver = new ResizeObserver(() => {
-      updateSize();
+    const [size, setSize] = useState({
+        width: 0,
+        height: 0,
     });
 
-    updateSize();
+    useEffect(() => {
+        if (!element) return;
 
-    resizeObserver.observe(element);
-    return () => resizeObserver.disconnect();
-  }, [element]);
+        const updateSize = () => {
+            const rect = element.getBoundingClientRect();
+            setSize({
+                width: parseFloat(rect.width.toFixed(2)),
+                height: parseFloat(rect.height.toFixed(2)),
+            });
+        };
 
-  return [elementRef, size] as const;
+        const resizeObserver = new ResizeObserver(() => {
+            updateSize();
+        });
+
+        updateSize();
+
+        resizeObserver.observe(element);
+        return () => resizeObserver.disconnect();
+    }, [element]);
+
+    return [elementRef, size] as const;
 };
