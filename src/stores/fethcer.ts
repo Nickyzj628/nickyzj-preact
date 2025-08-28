@@ -19,15 +19,15 @@ export const createBlogsStore = (params?: BlogsParams) => {
   return createFetcherStore<BlogsResp>(["/blogs", `?${objectToQueryString(params)}`]);
 };
 
-export const createBlogStore = (id: string) => {
-  return createFetcherStore<BlogResp>(["/blogs", `/${id}`]);
+export const createBlogStore = (year: number, id: string) => {
+  return createFetcherStore<BlogResp>(["/blogs", `/${year}/${id}`]);
 };
 
 export const createBlogMutatorStore = () => {
   return createMutatorStore<BlogMutationBody>(async ({ data, revalidate }) => {
     revalidate((key) => key.startsWith("/blogs?page="));
-    revalidate(`/blogs/${data.id}`);
-    return request(`/blogs/${data.id}`, {
+    revalidate(`/blogs/${data.year}/${data.title}`);
+    return request(`/blogs/${data.year}/${data.title}`, {
       method: "PUT",
       body: data,
     });

@@ -49,8 +49,8 @@ export const useBlogs = (props?: Props) => {
   };
 };
 
-export const useBlog = (id: string) => {
-  const $blog = useMemo(() => createBlogStore(id), [id]);
+export const useBlog = (year: number, id: string) => {
+  const $blog = useMemo(() => createBlogStore(year, id), [year, id]);
 
   const { data, error, loading } = useStore($blog);
   const isLoading = loading || (!data && !error);

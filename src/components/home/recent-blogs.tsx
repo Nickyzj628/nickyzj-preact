@@ -26,13 +26,7 @@ const Container = ({ className, bodyClassName, children }: ContainerProps) => {
 
 const RecentBlogs = () => {
   const { data, error, isLoading } = useBlogs();
-
-  const filteredBlogs = useMemo(() => {
-    if (!data || !data.blogs) return [];
-    return data.blogs
-      .filter((blog) => blog.visibility === 1)
-      .slice(0, 3);
-  }, [data]);
+  const blogs = (data?.data ?? []).slice(0, 3);
 
   if (isLoading) {
     return (
@@ -55,13 +49,13 @@ const RecentBlogs = () => {
 
   return (
     <Container>
-      {filteredBlogs.map((blog, i) => (
+      {blogs.map((blog, i) => (
         <a
-          key={blog.id}
-          href={`/blogs/${blog.id}`}
+          key={blog.title}
+          href={`/blogs/${blog.year}/${blog.title}`}
           className="flex flex-1 w-full bg-zinc-200 bg-center bg-cover"
           style={{
-            backgroundImage: `url(${getImage(`/blogs/${blog.id}.webp`)}), url(${getImage(`/default.webp`)})`,
+            backgroundImage: `url(${getImage(`/Blogs/${blog.title}.webp`)}), url(${getImage(`/default.webp`)})`,
           }}
         >
           <div
@@ -74,7 +68,7 @@ const RecentBlogs = () => {
               {blog.title}
             </h4>
             <span className={clsx("text-sm transition", i === 0 ? "text-white" : "text-neutral-400 group-hover:text-white")}>
-              {fromNow(parseInt(blog.id, 36))}
+              {fromNow(blog.updated)}更新
             </span>
           </div>
         </a>

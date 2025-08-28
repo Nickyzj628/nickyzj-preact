@@ -50,6 +50,7 @@ type Blog = {
   id: string;
   title: string;
   visibility: number;
+  year: number;
   updated: number;
   minutes?: number;
   content?: string;
@@ -61,16 +62,16 @@ type BlogsParams = {
 };
 
 type BlogsResp = RespWithpage & {
-  blogs: Blog[];
+  data: Blog[];
 };
 
 type BlogResp = Resp & Blog;
 
 type BlogMutationBody = {
-  id: string;
   title: string;
-  visibility: number;
-  banner?: string;
+  year: number;
+  /** base64 */
+  cover?: string;
 };
 
 // ------------ 番剧

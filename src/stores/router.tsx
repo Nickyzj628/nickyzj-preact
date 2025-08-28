@@ -28,7 +28,7 @@ export const routes: Route[] = [
     component: lazy(() => import("@/pages/blogs")),
   },
   {
-    id: "/blogs/:id",
+    id: "/blogs/:year/:id",
     accessible: true,
     component: lazy(() => import("@/pages/blog")),
   },

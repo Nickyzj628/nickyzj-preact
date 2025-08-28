@@ -23,7 +23,7 @@ const ImageUploader = ({
     const file = e.currentTarget.files[0];
     if (!file) return;
     try {
-      const compressedBase64 = await compressImageFromFile(file, { maxHeight: 384 });
+      const compressedBase64 = await compressImageFromFile(file, { maxHeight: 512 });
       onChange?.(compressedBase64);
     } catch (err) {
       toast.error(`压缩图片失败：${err.message}`);
