@@ -8,6 +8,7 @@ import { useIsMobile } from "@/hooks/device";
 import { useTitle } from "@/hooks/dom";
 import { useAnime, useRouter } from "@/hooks/store";
 import NotFound from "@/pages/not-found";
+import { useState } from "preact/hooks";
 
 enum Tab {
     Episodes,
@@ -30,9 +31,15 @@ const Page = () => {
      */
 
     const isMobile = useIsMobile();
-    const restHeight = isMobile ? "50vh" : "calc(100vh - 24px - 64px - 12px)";
+    const restHeight = isMobile ? "50vh" : "calc(100vh - 24px - 64px - 24px)";
     const tabContentClassName = "flex flex-col gap-1.5 p-3 rounded-xl bg-neutral-100 overflow-y-auto transition dark:bg-neutral-700";
 
+    /**
+     * 房间相关状态
+     */
+
+    const [isHost, setIsHost] = useState(true);
+    
     if (isLoading) {
         return (
             <div className="absolute inset-0 m-auto flex flex-col items-center gap-1 size-fit text-neutral-400 transition dark:text-neutral-500">
@@ -54,7 +61,7 @@ const Page = () => {
             />
             <Tabs
                 defaultValue={Tab.Room}
-                className="w-full xl:w-64 overflow-hidden"
+                className="w-full xl:w-72 overflow-hidden"
                 style={{
                     height: restHeight,
                 }}
@@ -83,7 +90,7 @@ const Page = () => {
                     value={Tab.Room}
                     className={tabContentClassName}
                 >
-                    <Room />
+                    <Room isHost={isHost} onChangeHost={setIsHost} />
                 </Tabs.Content>
                 <Tabs.Content
                     value={Tab.Comments}
