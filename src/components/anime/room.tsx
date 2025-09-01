@@ -1,8 +1,9 @@
+import { useSocket } from "@/contexts/socket";
+import { sleep } from "@/helpers/time";
 import { useRouter, useUser } from "@/hooks/store";
 import { $router } from "@/stores/router";
-import { useSocket } from "@/contexts/socket";
 import { FormEvent } from "preact/compat";
-import { useEffect, useMemo, useRef, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 
 type Message = {
     userName: string;
@@ -16,7 +17,7 @@ const Room = () => {
     const { name: userName } = useUser();
 
     const socket = useSocket();
-    const socketId = useMemo(() => socket?.id, [socket]);
+    const socketId = socket?.id;
 
     /**
      * 房间进出相关逻辑
@@ -40,7 +41,7 @@ const Room = () => {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on("roomCreated", (roomId) => {
+        socket.on("roomCreated", async (roomId) => {
             const queryString = Object.entries({ ...router.search, roomId })
                 .map(([key, value]) => `${key}=${value}`)
                 .join("&");
@@ -51,14 +52,6 @@ const Room = () => {
         socket.on("roomJoined", () => {
             setIsInRoom(true);
         });
-
-        return () => {
-            if (!roomId || !socket) {
-                return;
-            }
-            socket.disconnect();
-            setIsInRoom(false);
-        };
     }, [socket, roomId]);
 
     /**
@@ -66,9 +59,6 @@ const Room = () => {
      */
 
     const [messages, setMessages] = useState<Message[]>([]);
-    const addMessage = (message: Message) => {
-        setMessages((prev) => [...prev, message]);
-    };
 
     // 发消息
     const onSendMessage = (e: FormEvent) => {
@@ -81,7 +71,6 @@ const Room = () => {
         const message = { userName, text: input.value };
 
         socket.emit("roomMessage", roomId, message);
-        addMessage(message);
         form.reset();
     };
 
@@ -89,7 +78,9 @@ const Room = () => {
     useEffect(() => {
         if (!socket) return;
 
-        socket.on("roomMessage", addMessage);
+        socket.on("roomMessage", (message: Message) => {
+            setMessages((prev) => [...prev, message]);
+        });
 
         return () => {
             socket.off("roomMessage");

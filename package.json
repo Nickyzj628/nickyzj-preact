@@ -11,6 +11,7 @@
     "@nanostores/query": "^0.3.4",
     "@nanostores/router": "^1.0.0",
     "@tailwindcss/vite": "^4.1.4",
+    "danmaku": "^2.0.9",
     "dayjs": "^1.11.13",
     "medium-zoom": "^1.1.0",
     "nanostores": "^1.0.1",

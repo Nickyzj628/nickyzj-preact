@@ -4,7 +4,8 @@ import Video from "@/components/anime/video";
 import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
 import { SocketProvider } from "@/contexts/socket";
-import { useSize, useTitle } from "@/hooks/dom";
+import { useIsMobile } from "@/hooks/device";
+import { useTitle } from "@/hooks/dom";
 import { useAnime, useRouter } from "@/hooks/store";
 import NotFound from "@/pages/not-found";
 
@@ -28,8 +29,8 @@ const Page = () => {
      * Tab 相关状态
      */
 
-    // Tab 高度 = 视频高度
-    const [videoContainerRef, videoContainerSize] = useSize();
+    const isMobile = useIsMobile();
+    const restHeight = isMobile ? "50vh" : "calc(100vh - 24px - 64px - 12px)";
     const tabContentClassName = "flex flex-col gap-1.5 p-3 rounded-xl bg-neutral-100 overflow-y-auto transition dark:bg-neutral-700";
 
     if (isLoading) {
@@ -46,20 +47,16 @@ const Page = () => {
 
     return (
         <SocketProvider config={{ path: "/rooms" }}>
-            <div
-                ref={videoContainerRef}
-                className="w-full xl:flex-1 aspect-video rounded-xl"
-            >
-                <Video
-                    anime={data}
-                    ep={ep}
-                />
-            </div>
+            <Video
+                anime={data}
+                ep={ep}
+                restHeight={isMobile ? "" : restHeight}
+            />
             <Tabs
-                defaultValue={Tab.Episodes}
+                defaultValue={Tab.Room}
                 className="w-full xl:w-64 overflow-hidden"
                 style={{
-                    height: videoContainerSize.height,
+                    height: restHeight,
                 }}
             >
                 <Tabs.List>

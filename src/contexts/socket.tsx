@@ -6,6 +6,9 @@ import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
 export const SocketContext = createContext<Socket | null>(null);
 
+/**
+ * 通用的 Socket.IO Context Provider
+ */
 export const SocketProvider = ({
     config,
     children,
@@ -24,6 +27,9 @@ export const SocketProvider = ({
         socket.on("disconnect", () => {
             setSocket(null);
         });
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     return (

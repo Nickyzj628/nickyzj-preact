@@ -20,6 +20,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.4
         version: 4.1.4(vite@6.2.6(@types/node@22.14.0)(jiti@2.4.2)(lightningcss@1.29.2)(yaml@2.7.1))
+      danmaku:
+        specifier: ^2.0.9
+        version: 2.0.9
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -662,6 +665,9 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
+
+  danmaku@2.0.9:
+    resolution: {integrity: sha512-K8XM3tWiKR7adbt45NgWucmFzY91eHKiLDPbeFXCZ2KWEju+3hgSIaWMkdg8dnxVTguKOc82vF/0DXm1Y02EUA==}
 
   dayjs@1.11.13:
     resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
@@ -1645,6 +1651,8 @@ snapshots:
   css-what@6.1.0: {}
 
   cssesc@3.0.0: {}
+
+  danmaku@2.0.9: {}
 
   dayjs@1.11.13: {}
 

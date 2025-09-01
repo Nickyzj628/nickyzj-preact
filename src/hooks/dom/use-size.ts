@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from "preact/hooks";
 
 export const useSize = () => {
     const [element, setElement] = useState<HTMLElement | null>(null);
-    const elementRef = useCallback((node: HTMLElement | null) => {
+    const initElementByRef = useCallback((node: HTMLElement | null) => {
         setElement(node);
     }, []);
 
@@ -32,5 +32,5 @@ export const useSize = () => {
         return () => resizeObserver.disconnect();
     }, [element]);
 
-    return [elementRef, size] as const;
+    return [initElementByRef, element, size] as const;
 };
