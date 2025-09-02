@@ -4,7 +4,6 @@ import Video from "@/components/anime/video";
 import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
 import { SocketProvider } from "@/contexts/socket";
-import { useIsMobile } from "@/hooks/device";
 import { useTitle } from "@/hooks/dom";
 import { useAnime, useRouter } from "@/hooks/store";
 import NotFound from "@/pages/not-found";
@@ -30,8 +29,6 @@ const Page = () => {
      * Tab 相关状态
      */
 
-    const isMobile = useIsMobile();
-    const restHeight = isMobile ? "50vh" : "calc(100vh - 24px - 64px - 24px)";
     const tabContentClassName = "flex flex-col gap-1.5 p-3 rounded-xl bg-neutral-100 overflow-y-auto transition dark:bg-neutral-700";
 
     /**
@@ -39,7 +36,7 @@ const Page = () => {
      */
 
     const [isHost, setIsHost] = useState(true);
-    
+
     if (isLoading) {
         return (
             <div className="absolute inset-0 m-auto flex flex-col items-center gap-1 size-fit text-neutral-400 transition dark:text-neutral-500">
@@ -57,14 +54,11 @@ const Page = () => {
             <Video
                 anime={data}
                 ep={ep}
-                restHeight={isMobile ? "" : restHeight}
+                isHost={isHost}
             />
             <Tabs
                 defaultValue={Tab.Room}
                 className="w-full xl:w-72 overflow-hidden"
-                style={{
-                    height: restHeight,
-                }}
             >
                 <Tabs.List>
                     <Tabs.Trigger value={Tab.Episodes}>
@@ -84,13 +78,17 @@ const Page = () => {
                     <Episodes
                         list={data.episodes}
                         activeIndex={ep - 1}
+                        disabled={!isHost}
                     />
                 </Tabs.Content>
                 <Tabs.Content
                     value={Tab.Room}
                     className={tabContentClassName}
                 >
-                    <Room isHost={isHost} onChangeHost={setIsHost} />
+                    <Room
+                        isHost={isHost}
+                        onChangeHost={setIsHost}
+                    />
                 </Tabs.Content>
                 <Tabs.Content
                     value={Tab.Comments}

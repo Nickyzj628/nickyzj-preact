@@ -1,8 +1,10 @@
 import { useSocket } from "@/contexts/socket";
 import { useRouter, useUser } from "@/hooks/store";
 import { $router } from "@/stores/router";
+import { toast } from "@/stores/toast";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
+import qs from "qs";
 import Badge from "../badge";
 
 type Message = {
@@ -61,12 +63,15 @@ const Room = ({
 
     // 房间进出相关事件
     useEffect(() => {
-        if (!socket) return;
+        if (!socket) {
+            return;
+        }
 
         socket.on("roomCreated", async (roomId) => {
-            const queryString = Object.entries({ ...router.search, roomId })
-                .map(([key, value]) => `${key}=${value}`)
-                .join("&");
+            const queryString = qs.stringify({
+                ...qs.parse(location.search, { ignoreQueryPrefix: true }),
+                roomId
+            });
             $router.open(`${router.path}?${queryString}`);
             setIsInRoom(true);
             onChangeHost(true);
@@ -75,15 +80,13 @@ const Room = ({
         socket.on("roomJoined", () => {
             setIsInRoom(true);
             onChangeHost(false);
+            // 同步视频时间、速率等信息
+            socket.emit("syncVideo");
         });
 
         socket.on("hostChanged", () => {
             onChangeHost(true);
-            setMessages((prev) => [...prev, {
-                type: "system",
-                userName: "创世神",
-                text: "你成为了房主！",
-            }]);
+            toast.success("你成为了房主！");
         });
     }, [socket, roomId]);
 
@@ -97,19 +100,23 @@ const Room = ({
     const onSendMessage = (e: FormEvent) => {
         e.preventDefault();
 
-        if (!socket) return;
+        if (!socket) {
+            return;
+        }
 
         const form = e.target as HTMLFormElement;
         const input = form.elements["text"] as HTMLInputElement;
         const message = { userName, isHost, text: input.value };
 
-        socket.emit("roomMessage", roomId, message);
+        socket.emit("roomMessage", message);
         form.reset();
     };
 
     // 收消息
     useEffect(() => {
-        if (!socket) return;
+        if (!socket) {
+            return;
+        }
 
         socket.on("roomMessage", (message: Message) => {
             setMessages((prev) => [...prev, message]);

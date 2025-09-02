@@ -1,25 +1,29 @@
 import { useSocket } from "@/contexts/socket";
 import { getAnimeVideoByEP } from "@/helpers//network";
-import { clsx } from "@/helpers/string";
+import { objectToQueryString } from "@/helpers/object";
+import { useRouter } from "@/hooks/store";
+import { $router } from "@/stores/router";
+import { toast } from "@/stores/toast";
 import Danmaku from "danmaku/dist/esm/danmaku.dom.js";
 import { useEffect, useRef } from "preact/hooks";
 
 type Props = {
     anime: Anime;
     ep: number;
-    /** 屏幕剩余高度 */
-    restHeight: string;
+    isHost?: boolean;
 };
 
 const Video = ({
     anime,
     ep,
-    restHeight = "100%",
+    isHost = true,
 }: Props) => {
+    const router = useRouter();
+    const socket = useSocket();
+
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-    const socket = useSocket();
 
     /**
     * 弹幕处理逻辑
@@ -45,7 +49,7 @@ const Video = ({
     }, [socket]);
 
     /**
-     * 视频控制逻辑
+     * 单机视频控制逻辑
      */
 
     const loadVolume = () => {
@@ -54,7 +58,7 @@ const Video = ({
     };
 
     const saveVolume = () => {
-        localStorage.setItem("volume", String(videoRef.current.volume));
+        localStorage.setItem("volume", videoRef.current.volume.toString());
     };
 
     useEffect(() => {
@@ -70,18 +74,123 @@ const Video = ({
         };
     }, []);
 
+    /**
+     * 房主视频控制逻辑
+     */
+
+    const playTogether = () => {
+        socket.emit("play");
+    };
+
+    const pauseTogether = () => {
+        socket.emit("pause");
+    };
+
+    const seekTogether = () => {
+        socket.emit("seek", videoRef.current.currentTime);
+    };
+
+    const rateChangeTogether = () => {
+        socket.emit("rateChange", videoRef.current.playbackRate);
+    };
+
+    const videoSyncRequest = (requestorId: string) => {
+        socket.emit("videoInfo", requestorId, {
+            currentTime: videoRef.current.currentTime,
+            playbackRate: videoRef.current.playbackRate,
+            paused: videoRef.current.paused,
+        });
+    };
+
+    useEffect(() => {
+        const { current: video } = videoRef;
+        if (!isHost || !socket || !video) {
+            return;
+        }
+
+        video.addEventListener("play", playTogether);
+        video.addEventListener("pause", pauseTogether);
+        video.addEventListener("seeked", seekTogether);
+        video.addEventListener("ratechange", rateChangeTogether);
+        socket.on("videoSyncRequest", videoSyncRequest);
+
+        return () => {
+            video.removeEventListener("play", playTogether);
+            video.removeEventListener("pause", pauseTogether);
+            video.removeEventListener("seeked", seekTogether);
+            video.removeEventListener("ratechange", rateChangeTogether);
+        };
+    }, [isHost, socket]);
+
+    /**
+     * 观众视频被控逻辑
+     */
+
+    const played = () => {
+        videoRef.current.play();
+        toast.info("房主播放了视频");
+    };
+
+    const paused = () => {
+        videoRef.current.pause();
+        toast.info("房主暂停了视频");
+    };
+
+    const seeked = (time: number) => {
+        console.log(time)
+        videoRef.current.currentTime = time;
+        toast.info(`房主将视频进度跳转到了${Math.floor(time / 60)}:${Math.floor(time % 60).toString().padStart(2, "0")}`);
+    };
+
+    const rateChanged = (rate: number) => {
+        videoRef.current.playbackRate = rate;
+        toast.info(`房主将播放速度调到了${rate}`);
+    };
+
+    const epChanged = (ep: number) => {
+        const queryString = objectToQueryString({ ...router.search, ep });
+        $router.open(`${router.path}?${queryString}`);
+        toast.info(`房主切换到了第${ep}话`);
+    };
+
+    const videoSyncResponse = (info: { currentTime: number; playbackRate: number; paused: boolean }) => {
+        const { currentTime, playbackRate, paused } = info;
+        const { current: video } = videoRef;
+        video.currentTime = currentTime;
+        video.playbackRate = playbackRate;
+        // 避免自动播放被阻止，之后加上hasInteraction判断
+        video.muted = true;
+        if (paused) {
+            video.pause();
+        } else {
+            video.play();
+        }
+        toast.info("已同步房主的视频状态");
+    };
+
+    useEffect(() => {
+        const { current: video } = videoRef;
+        if (isHost || !socket || !video) {
+            return;
+        }
+
+        socket.on("played", played);
+        socket.on("paused", paused);
+        socket.on("seeked", seeked)
+        socket.on("rateChanged", rateChanged);
+        socket.on("epChanged", epChanged);
+        socket.on("videoSyncResponse", videoSyncResponse);
+    }, [isHost, socket]);
+
     return (
         <div
             ref={containerRef}
-            className={clsx("relative w-full xl:flex-1 rounded-xl bg-black", !restHeight && "aspect-video")}
-            style={{
-                height: restHeight,
-            }}
+            className="relative aspect-video w-full xl:flex-1 rounded-xl bg-black"
         >
             <video
                 ref={videoRef}
                 src={getAnimeVideoByEP(anime, ep)}
-                controls
+                controls={isHost}
                 className="absolute top-0 left-0 size-full"
             />
         </div>

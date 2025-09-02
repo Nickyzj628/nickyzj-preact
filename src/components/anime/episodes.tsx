@@ -1,26 +1,43 @@
+import { useSocket } from "@/contexts/socket";
+import { objectToQueryString } from "@/helpers/object";
 import { clsx } from "@/helpers/string";
-import { useEffect, useRef } from "preact/hooks";
+import { useRouter } from "@/hooks/store";
+import { $router } from "@/stores/router";
+import { useEffect, useMemo, useRef } from "preact/hooks";
+import qs from "qs";
 
 type EpisodesProps = {
     list?: string[];
     activeIndex?: number;
+    disabled?: boolean;
 };
 
 type EpisodeProps = {
     label: string;
     value: number;
     isActive: boolean;
+    disabled: boolean;
+    onEpChange?: (ep: number, href: string) => void;
 };
 
 const Episode = ({
     label,
     value,
-    isActive
+    isActive,
+    disabled = false,
+    onEpChange,
 }: EpisodeProps) => {
+    const router = useRouter();
+    const href = useMemo(() => {
+        return `${router.path}?${qs.stringify({ ...router.search, ep: value })}`;
+    }, [router]);
+
     // 选中时进入视图
     const ref = useRef<HTMLAnchorElement>(null);
     useEffect(() => {
-        if (!isActive) return;
+        if (!isActive) {
+            return;
+        }
         ref.current?.scrollIntoView({
             block: "nearest",
         });
@@ -29,11 +46,13 @@ const Episode = ({
     return (
         <a
             ref={ref}
-            href={`?ep=${value}`}
+            href={href}
             className={clsx(
                 "text-sm",
-                isActive ? "dark:text-white" : "text-neutral-400 hover:text-black dark:hover:text-white"
+                isActive ? "dark:text-white" : "text-neutral-400",
+                disabled ? "cursor-not-allowed opacity-50" : "hover:text-black dark:hover:text-white",
             )}
+            onClick={() => onEpChange?.(value, href)}
         >
             {label}
         </a>
@@ -43,7 +62,16 @@ const Episode = ({
 const Episodes = ({
     list = [],
     activeIndex = 0,
+    disabled = false,
 }: EpisodesProps) => {
+    const router = useRouter();
+    const socket = useSocket();
+
+    const onEpChange = (ep: number, href: string) => {
+        $router.open(href);
+        socket?.emit("epChange", ep);
+    };
+
     return list.map((episode, i) => {
         const ep = i + 1;
         const isActive = i === activeIndex;
@@ -54,6 +82,8 @@ const Episodes = ({
                 label={episode}
                 value={ep}
                 isActive={isActive}
+                disabled={disabled}
+                onEpChange={onEpChange}
             />
         );
     });
