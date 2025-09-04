@@ -101,3 +101,9 @@ type AnimeMutationBody = {
     /** base64 */
     cover?: string;
 };
+
+type RoomMessage = {
+    type?: "user" | "host" | "system";
+    userName: string;
+    text: string;
+};

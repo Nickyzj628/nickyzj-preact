@@ -1,4 +1,4 @@
-import { compressImageFromFile } from "@/helpers/dom";
+import { compressImageFromFile } from "@/helpers/compress-image";
 import { clsx } from "@/helpers/string";
 import { ChangeEvent } from "preact/compat";
 import { toast } from "react-hot-toast";

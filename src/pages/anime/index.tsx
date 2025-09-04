@@ -1,6 +1,6 @@
-import Episodes from "@/components/anime/episodes";
-import Room from "@/components/anime/room";
-import Video from "@/components/anime/video";
+import Episodes from "@/pages/anime/episodes";
+import Room from "@/pages/anime/room";
+import Video from "@/pages/anime/video";
 import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
 import { SocketProvider } from "@/contexts/socket";
@@ -58,7 +58,7 @@ const Page = () => {
             />
             <Tabs
                 defaultValue={Tab.Episodes}
-                className="w-full xl:w-72 overflow-hidden"
+                className="w-full xl:w-64 max-h-96 overflow-hidden"
             >
                 <Tabs.List>
                     <Tabs.Trigger value={Tab.Episodes}>

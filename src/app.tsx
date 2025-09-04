@@ -275,6 +275,11 @@ const App = () => {
         </div>
         <Toaster
             position="bottom-right"
+            toastOptions={{
+                style: {
+                    wordBreak: "break-word",
+                },
+            }}
         />
     </>;
 };

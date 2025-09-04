@@ -1,19 +1,14 @@
 import { useSocket } from "@/contexts/socket";
+import { copyToClipboard } from "@/helpers/dom";
+import { qs } from "@/helpers/string";
 import { useRouter, useUser } from "@/hooks/store";
 import { $router } from "@/stores/router";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
-import qs from "qs";
 import { toast } from "react-hot-toast";
-import Badge from "../badge";
+import Badge from "../../components/badge";
 
-type Message = {
-    type?: "user" | "host" | "system";
-    userName: string;
-    text: string;
-};
-
-const getBadgeInfo = (message: Message): { type: "default" | "info" | "danger" | "invert", role: string } => {
+const getBadgeInfo = (message: RoomMessage): { type: "default" | "info" | "danger" | "invert", role: string } => {
     if (message.type === "system") {
         return {
             type: "danger",
@@ -51,7 +46,7 @@ const Room = ({
 
     // 创建房间
     const onCreateRoom = () => {
-        socket?.emit("createRoom", { userName });
+        socket.emit("createRoom", { userName });
     };
 
     // 加入房间
@@ -67,34 +62,46 @@ const Room = ({
             return;
         }
 
-        socket.on("roomCreated", async (roomId) => {
+        const onRoomCreated = async (roomId) => {
             const queryString = qs.stringify({
-                ...qs.parse(location.search, { ignoreQueryPrefix: true }),
+                ...qs.parse(location.search),
                 roomId
             });
             $router.open(`${router.path}?${queryString}`);
             setIsInRoom(true);
             onChangeHost(true);
-        });
+            toast.success(<>
+                <span>房间创建成功！</span>
+                <span className="text-blue-500 cursor-pointer" onClick={() => copyToClipboard(location.href)}>点我复制链接到剪贴板</span>
+            </>, { duration: 10000 });
+        };
 
-        socket.on("roomJoined", () => {
+        const onRoomJoined = () => {
             setIsInRoom(true);
             onChangeHost(false);
-            // 同步视频时间、速率等信息
-            socket.emit("syncVideo");
-        });
+        };
 
-        socket.on("hostChanged", () => {
+        const onHostChanged = () => {
             onChangeHost(true);
             toast.success("你成为了房主！");
-        });
+        };
+
+        socket.on("roomCreated", onRoomCreated);
+        socket.on("roomJoined", onRoomJoined);
+        socket.on("hostChanged", onHostChanged);
+
+        return () => {
+            socket.off("roomCreated", onRoomCreated);
+            socket.off("roomJoined", onRoomJoined);
+            socket.off("hostChanged", onHostChanged);
+        };
     }, [socket, roomId]);
 
     /**
      * 消息收发相关逻辑
      */
 
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<RoomMessage[]>([]);
 
     // 发消息
     const onSendMessage = (e: FormEvent) => {
@@ -118,12 +125,14 @@ const Room = ({
             return;
         }
 
-        socket.on("roomMessage", (message: Message) => {
+        const onRoomMessage = (message: RoomMessage) => {
             setMessages((prev) => [...prev, message]);
-        });
+        };
+
+        socket.on("roomMessage", onRoomMessage);
 
         return () => {
-            socket.off("roomMessage");
+            socket.off("roomMessage", onRoomMessage);
         };
     }, [socket]);
 

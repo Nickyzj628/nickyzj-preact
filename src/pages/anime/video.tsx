@@ -1,6 +1,6 @@
 import { useSocket } from "@/contexts/socket";
-import { getAnimeVideoByEP, to } from "@/helpers//network";
-import { objectToQueryString } from "@/helpers/object";
+import { getAnimeVideoByEP, to } from "@/helpers/network";
+import { qs } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
 import { useRouter } from "@/hooks/store";
 import { $router } from "@/stores/router";
@@ -34,10 +34,11 @@ const Video = ({
         if (!socket) {
             return;
         }
+
         const danmaku = new Danmaku({
             container: containerRef.current,
         });
-        socket.on("roomMessage", (message) => {
+        const onRoomMessage = (message: RoomMessage) => {
             danmaku.emit({
                 text: message.text,
                 style: {
@@ -46,7 +47,13 @@ const Video = ({
                     color: "white",
                 },
             });
-        });
+        };
+
+        socket.on("roomMessage", onRoomMessage);
+
+        return () => {
+            socket.off("roomMessage", onRoomMessage);
+        };
     }, [socket]);
 
     /**
@@ -121,6 +128,7 @@ const Video = ({
             video.removeEventListener("pause", pauseTogether);
             video.removeEventListener("seeked", seekTogether);
             video.removeEventListener("ratechange", rateChangeTogether);
+            socket.off("videoSyncRequest", videoSyncRequest);
         };
     }, [isHost, socket]);
 
@@ -169,8 +177,8 @@ const Video = ({
     };
 
     const beEpChanged = (ep: number) => {
-        const queryString = objectToQueryString({ ...router.search, ep });
-        $router.open(`${router.path}?${queryString}`);
+        const queryString = qs.stringify({ ...router.search, ep }, { addQueryPrefix: true });
+        $router.open(`${router.path}${queryString}`);
         toast(`房主切换到了第${ep}话`);
     };
 
@@ -184,7 +192,6 @@ const Video = ({
         } else {
             bePlayed();
         }
-        toast("已同步房主的视频状态");
     };
 
     // 主动同步视频时间、速率等信息
@@ -200,16 +207,26 @@ const Video = ({
 
         socket.on("played", bePlayed);
         socket.on("paused", bePaused);
-        socket.on("seeked", beSeeked)
+        socket.on("seeked", beSeeked);
         socket.on("rateChanged", beRateChanged);
         socket.on("epChanged", beEpChanged);
         socket.on("videoInfo", beVideoSynced);
+        syncVideo();
+
+        return () => {
+            socket.off("played", bePlayed);
+            socket.off("paused", bePaused);
+            socket.off("seeked", beSeeked);
+            socket.off("rateChanged", beRateChanged);
+            socket.off("epChanged", beEpChanged);
+            socket.off("videoInfo", beVideoSynced);
+        };
     }, [isHost, socket]);
 
     return (
         <div
             ref={containerRef}
-            className="relative aspect-video w-full xl:flex-1 rounded-xl bg-black"
+            className="relative aspect-video w-full xl:flex-1 max-h-[80vh] rounded-xl bg-black"
         >
             <video
                 ref={videoRef}

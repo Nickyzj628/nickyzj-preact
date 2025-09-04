@@ -1,5 +1,5 @@
 import { request } from "@/helpers/network";
-import { objectToQueryString } from "@/helpers/object";
+import { qs } from "@/helpers/string";
 import { nanoquery } from "@nanostores/query";
 
 const [createFetcherStore, createMutatorStore] = nanoquery({
@@ -16,7 +16,7 @@ export const createShanbayStore = () => {
 // ------------ 文章
 
 export const createBlogsStore = (params?: BlogsParams) => {
-    return createFetcherStore<BlogsResp>(["/blogs", `?${objectToQueryString(params)}`]);
+    return createFetcherStore<BlogsResp>(["/blogs", `${qs.stringify(params, { addQueryPrefix: true })}`]);
 };
 
 export const createBlogStore = (year: number, id: string) => {
@@ -37,7 +37,7 @@ export const createBlogMutatorStore = () => {
 // ------------ 番剧
 
 export const createAnimesStore = (params?: AnimesParams) => {
-    return createFetcherStore<AnimesResp>(["/animes", `?${objectToQueryString(params)}`]);
+    return createFetcherStore<AnimesResp>(["/animes", `${qs.stringify(params, { addQueryPrefix: true })}`]);
 };
 
 export const createAnimeStore = (season: string, title: string) => {

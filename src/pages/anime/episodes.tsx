@@ -1,10 +1,8 @@
 import { useSocket } from "@/contexts/socket";
-import { objectToQueryString } from "@/helpers/object";
-import { clsx } from "@/helpers/string";
+import { clsx, qs } from "@/helpers/string";
 import { useRouter } from "@/hooks/store";
 import { $router } from "@/stores/router";
 import { useEffect, useMemo, useRef } from "preact/hooks";
-import qs from "qs";
 
 type EpisodesProps = {
     list?: string[];
@@ -64,12 +62,11 @@ const Episodes = ({
     activeIndex = 0,
     disabled = false,
 }: EpisodesProps) => {
-    const router = useRouter();
     const socket = useSocket();
 
     const onEpChange = (ep: number, href: string) => {
         $router.open(href);
-        socket?.emit("epChange", ep);
+        socket.emit("epChange", ep);
     };
 
     return list.map((episode, i) => {
