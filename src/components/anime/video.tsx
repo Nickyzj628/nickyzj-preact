@@ -1,11 +1,12 @@
 import { useSocket } from "@/contexts/socket";
-import { getAnimeVideoByEP } from "@/helpers//network";
+import { getAnimeVideoByEP, to } from "@/helpers//network";
 import { objectToQueryString } from "@/helpers/object";
+import { throttle } from "@/helpers/time";
 import { useRouter } from "@/hooks/store";
 import { $router } from "@/stores/router";
-import { toast } from "@/stores/toast";
 import Danmaku from "danmaku/dist/esm/danmaku.dom.js";
-import { useEffect, useRef } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { toast } from "react-hot-toast";
 
 type Props = {
     anime: Anime;
@@ -90,15 +91,16 @@ const Video = ({
         socket.emit("seek", videoRef.current.currentTime);
     };
 
-    const rateChangeTogether = () => {
+    const rateChangeTogether = useCallback(throttle(() => {
         socket.emit("rateChange", videoRef.current.playbackRate);
-    };
+    }), [socket]);
 
     const videoSyncRequest = (requestorId: string) => {
-        socket.emit("videoInfo", requestorId, {
-            currentTime: videoRef.current.currentTime,
-            playbackRate: videoRef.current.playbackRate,
-            paused: videoRef.current.paused,
+        const video = videoRef.current;
+        socket.emit("videoSyncResponse", requestorId, {
+            currentTime: video.currentTime,
+            playbackRate: video.playbackRate,
+            paused: video.paused,
         });
     };
 
@@ -126,46 +128,68 @@ const Video = ({
      * 观众视频被控逻辑
      */
 
-    const played = () => {
-        videoRef.current.play();
-        toast.info("房主播放了视频");
+    // 视频被房主播放前，用户必须和页面有过交互
+    // play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+    const [needInteract, setNeedInteract] = useState(false);
+
+    const bePlayed = async () => {
+        const video = videoRef.current;
+        if (!video.paused) {
+            return;
+        }
+
+        const [err] = await to(video.play());
+        if (err && err.name === "NotAllowedError") {
+            setNeedInteract(true);
+        } else {
+            toast("房主播放了视频");
+        }
     };
 
-    const paused = () => {
-        videoRef.current.pause();
-        toast.info("房主暂停了视频");
+    const bePaused = () => {
+        const video = videoRef.current;
+        if (video.paused) {
+            return;
+        }
+
+        video.pause();
+        toast("房主暂停了视频");
     };
 
-    const seeked = (time: number) => {
-        console.log(time)
-        videoRef.current.currentTime = time;
-        toast.info(`房主将视频进度跳转到了${Math.floor(time / 60)}:${Math.floor(time % 60).toString().padStart(2, "0")}`);
+    const beSeeked = (time: number) => {
+        const video = videoRef.current;
+        video.currentTime = time;
+        toast(`房主将视频进度跳转到了${Math.floor(time / 60)}:${Math.floor(time % 60).toString().padStart(2, "0")}`);
     };
 
-    const rateChanged = (rate: number) => {
-        videoRef.current.playbackRate = rate;
-        toast.info(`房主将播放速度调到了${rate}`);
+    const beRateChanged = (rate: number) => {
+        const video = videoRef.current;
+        video.playbackRate = rate;
+        toast(`房主将播放速度调到了${rate}`);
     };
 
-    const epChanged = (ep: number) => {
+    const beEpChanged = (ep: number) => {
         const queryString = objectToQueryString({ ...router.search, ep });
         $router.open(`${router.path}?${queryString}`);
-        toast.info(`房主切换到了第${ep}话`);
+        toast(`房主切换到了第${ep}话`);
     };
 
-    const videoSyncResponse = (info: { currentTime: number; playbackRate: number; paused: boolean }) => {
+    const beVideoSynced = async (info: { currentTime: number; playbackRate: number; paused: boolean }) => {
         const { currentTime, playbackRate, paused } = info;
-        const { current: video } = videoRef;
+        const video = videoRef.current;
         video.currentTime = currentTime;
         video.playbackRate = playbackRate;
-        // 避免自动播放被阻止，之后加上hasInteraction判断
-        video.muted = true;
         if (paused) {
-            video.pause();
+            bePaused();
         } else {
-            video.play();
+            bePlayed();
         }
-        toast.info("已同步房主的视频状态");
+        toast("已同步房主的视频状态");
+    };
+
+    // 主动同步视频时间、速率等信息
+    const syncVideo = () => {
+        socket.emit("syncVideo");
     };
 
     useEffect(() => {
@@ -174,12 +198,12 @@ const Video = ({
             return;
         }
 
-        socket.on("played", played);
-        socket.on("paused", paused);
-        socket.on("seeked", seeked)
-        socket.on("rateChanged", rateChanged);
-        socket.on("epChanged", epChanged);
-        socket.on("videoSyncResponse", videoSyncResponse);
+        socket.on("played", bePlayed);
+        socket.on("paused", bePaused);
+        socket.on("seeked", beSeeked)
+        socket.on("rateChanged", beRateChanged);
+        socket.on("epChanged", beEpChanged);
+        socket.on("videoInfo", beVideoSynced);
     }, [isHost, socket]);
 
     return (
@@ -193,6 +217,19 @@ const Video = ({
                 controls={isHost}
                 className="absolute top-0 left-0 size-full"
             />
+            {needInteract && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <button
+                        className="px-8"
+                        onClick={() => {
+                            syncVideo();
+                            setNeedInteract(false);
+                        }}
+                    >
+                        点击播放
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

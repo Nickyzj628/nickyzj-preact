@@ -57,7 +57,7 @@ const Page = () => {
                 isHost={isHost}
             />
             <Tabs
-                defaultValue={Tab.Room}
+                defaultValue={Tab.Episodes}
                 className="w-full xl:w-72 overflow-hidden"
             >
                 <Tabs.List>

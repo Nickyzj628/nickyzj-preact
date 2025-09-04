@@ -1,11 +1,10 @@
 import { useBlogMutation } from "@/hooks/store";
-import { toast } from "@/stores/toast";
 import { FormEvent } from "preact/compat";
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useMemo, useState } from "preact/hooks";
+import { toast } from "react-hot-toast";
 import Drawer from "../drawer";
 import ImageUploader from "../image-uploader";
 import Input from "../input";
-import Switch from "../switch";
 
 type Props = {
     data: Blog;

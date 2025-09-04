@@ -23,3 +23,12 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
 
     return data as T;
 };
+
+/** Go 语言风格的异步处理方式 */
+export const to = <T, U = Error>(promise: Promise<T>): Promise<[U, undefined] | [null, T]> => {
+    return promise
+        .then<[null, T]>((data: T) => [null, data])
+        .catch<[U, undefined]>((err: U) => {
+            return [err, undefined];
+        });
+};

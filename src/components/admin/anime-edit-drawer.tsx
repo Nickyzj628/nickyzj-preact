@@ -1,7 +1,7 @@
 import { useAnimeMutation } from "@/hooks/store";
-import { toast } from "@/stores/toast";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
+import { toast } from "react-hot-toast";
 import Drawer from "../drawer";
 import ImageUploader from "../image-uploader";
 import Input from "../input";

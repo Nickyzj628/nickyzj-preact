@@ -50,7 +50,7 @@ const Episode = ({
             className={clsx(
                 "text-sm",
                 isActive ? "dark:text-white" : "text-neutral-400",
-                disabled ? "cursor-not-allowed opacity-50" : "hover:text-black dark:hover:text-white",
+                disabled ? "pointer-events-none opacity-50" : "hover:text-black dark:hover:text-white",
             )}
             onClick={() => onEpChange?.(value, href)}
         >

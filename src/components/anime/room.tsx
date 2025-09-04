@@ -1,10 +1,10 @@
 import { useSocket } from "@/contexts/socket";
 import { useRouter, useUser } from "@/hooks/store";
 import { $router } from "@/stores/router";
-import { toast } from "@/stores/toast";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
 import qs from "qs";
+import { toast } from "react-hot-toast";
 import Badge from "../badge";
 
 type Message = {

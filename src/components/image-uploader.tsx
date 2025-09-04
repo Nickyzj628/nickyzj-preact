@@ -1,7 +1,7 @@
 import { compressImageFromFile } from "@/helpers/dom";
 import { clsx } from "@/helpers/string";
-import { toast } from "@/stores/toast";
 import { ChangeEvent } from "preact/compat";
+import { toast } from "react-hot-toast";
 import Img from "./image";
 
 type Props = {
