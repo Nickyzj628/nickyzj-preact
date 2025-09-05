@@ -1,11 +1,11 @@
-import Episodes from "@/pages/anime/episodes";
-import Room from "@/pages/anime/room";
-import Video from "@/pages/anime/video";
 import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
 import { SocketProvider } from "@/contexts/socket";
 import { useTitle } from "@/hooks/dom";
 import { useAnime, useRouter } from "@/hooks/store";
+import Episodes from "@/pages/anime/episodes";
+import Room from "@/pages/anime/room";
+import Video from "@/pages/anime/video";
 import NotFound from "@/pages/not-found";
 import { useState } from "preact/hooks";
 
@@ -67,9 +67,6 @@ const Page = () => {
                     <Tabs.Trigger value={Tab.Room}>
                         聊天
                     </Tabs.Trigger>
-                    <Tabs.Trigger value={Tab.Comments}>
-                        评论区
-                    </Tabs.Trigger>
                 </Tabs.List>
                 <Tabs.Content
                     value={Tab.Episodes}
@@ -89,12 +86,6 @@ const Page = () => {
                         isHost={isHost}
                         onChangeHost={setIsHost}
                     />
-                </Tabs.Content>
-                <Tabs.Content
-                    value={Tab.Comments}
-                    className={tabContentClassName}
-                >
-                    <span>🚧施工中...</span>
                 </Tabs.Content>
             </Tabs>
         </SocketProvider>
