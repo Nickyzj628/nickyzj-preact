@@ -1,14 +1,15 @@
 import { clsx } from "@/helpers/string";
-import { ComponentChildren } from "preact";
+import { ReactNode } from "preact/compat";
 
 type SectionProps = {
     className?: string;
-    children?: ComponentChildren;
+    children?: ReactNode;
 };
 
 type TitleProps = {
     className?: string;
-    children: ComponentChildren;
+    markClassName?: string;
+    children: ReactNode;
 };
 
 const Section = ({ className, children, }: SectionProps) => {
@@ -21,11 +22,12 @@ const Section = ({ className, children, }: SectionProps) => {
 
 Section.Title = ({
     className = "text-neutral-300",
+    markClassName = "",
     children,
 }: TitleProps) => {
     return (
         <div className={clsx("flex items-center gap-1.5", className)}>
-            <div className="w-2.5 h-6 rounded-full bg-current" />
+            <div className={clsx("w-2.5 h-6 rounded-full bg-current", markClassName)} />
             <h4>{children}</h4>
         </div>
     );

@@ -2,42 +2,45 @@ import { getImage } from "@/helpers/network";
 import { useEffect, useState } from "preact/hooks";
 
 type Props = {
+    /** 支持 WebDav 相对路径、base64、HTTP 地址 */
     src: string;
     alt?: string;
     className?: string;
-}
+};
 
-/** 处理`http`和`/`开头的图片地址，返回具有对应`src`的`img`元素 */
 const Image = ({ src, alt, className }: Props) => {
-    const [_src, setSrc] = useState("");
+    const [fullSrc, setFullSrc] = useState("");
 
-    const onError = () => {
-        setSrc(getImage("/default.webp"));
+    const setDefaultSrc = () => {
+        setFullSrc(getImage("/default.webp"));
     };
 
     useEffect(() => {
         if (!src) {
             return;
         }
+
         if (src.startsWith("http")) {
-            setSrc(src);
-        } else if (src.startsWith("/")) {
-            setSrc(getImage(src));
+            setFullSrc(src);
         } else if (src.startsWith("data:image/")) {
-            setSrc(src);
+            setFullSrc(src);
+        } else if (src.startsWith("/")) {
+            setFullSrc(getImage(src));
+        } else {
+            setDefaultSrc();
         }
     }, [src]);
 
-    if (!_src) {
+    if (!fullSrc) {
         return null;
     }
 
     return (
         <img
-            src={_src}
+            src={fullSrc}
             alt={alt}
             className={className}
-            onError={onError}
+            onError={setDefaultSrc}
         />
     );
 };

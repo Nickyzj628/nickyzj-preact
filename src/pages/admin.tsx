@@ -21,14 +21,12 @@ const Page = () => {
                     番剧
                 </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content
-                value={Tab.Blogs}
-                as={<Blogs />}
-            />
-            <Tabs.Content
-                value={Tab.Animes}
-                as={<Animes />}
-            />
+            <Tabs.Content value={Tab.Blogs}>
+                <Blogs />
+            </Tabs.Content>
+            <Tabs.Content value={Tab.Animes}>
+                <Animes />
+            </Tabs.Content>
         </Tabs>
     );
 };

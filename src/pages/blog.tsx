@@ -2,8 +2,8 @@ import "@/assets/hljs.css";
 import Image from "@/components/image";
 import Loading from "@/components/loading";
 import Toggle from "@/components/toggle";
+import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
-import { fromNow } from "@/helpers/time";
 import { useTitle } from "@/hooks/dom";
 import { useZoom } from "@/hooks/observer";
 import { useBlog, useRouter } from "@/hooks/store";
@@ -21,100 +21,110 @@ const Page = () => {
     // 生成目录
     const [isCatalogVisible, setIsCatalogVisible] = useState(window.innerWidth > 1152);
     const catalog = useMemo(() => {
-        if (!data || !data.content) return [];
+        if (!data || !data.content) {
+            return [];
+        }
 
         const headers = data.content.match(/<h\d.*>.*<\/h\d>/g);
-        if (!headers) return [];
+        if (!headers) {
+            return [];
+        }
 
         const levels = headers.map((header) => Number(header[2]));
         const baseLevel = Math.min(...levels);
         return headers.map((header, i) => {
             const level = levels[i];
             const id = header.match(/(?<=id=").+(?=">)/)?.[0];
-            if (!id) return;
+            if (!id) {
+                return;
+            }
+
             return {
                 id,
                 text: header.slice(10 + id.length, -5),
                 style: { marginLeft: (level - baseLevel) * 8 },
             };
-        }).filter(Boolean);
+        }).filter((header) => !!header);
     }, [data]);
 
     // 锚点跳转
     useEffect(() => {
-        if (isLoading || !router.hash) return;
+        if (isLoading || !router.hash) {
+            return;
+        }
 
         const a = document.getElementById(
             decodeURIComponent(router.hash).replace("#", "")
         );
-        if (!a) return;
-
-        a.scrollIntoView();
+        a?.scrollIntoView();
     }, [isLoading, router.hash]);
 
     // 图片缩放
     const [articleRef] = useZoom();
 
-    if (isLoading) {
-        return (
-            <div className="absolute inset-0 m-auto flex flex-col items-center gap-1 size-fit text-neutral-400 transition dark:text-neutral-500">
-                <Loading />
-            </div>
-        );
-    };
+    if (isLoading) return (
+        <div className="absolute inset-0 m-auto flex flex-col items-center gap-1 size-fit text-neutral-400 transition dark:text-neutral-500">
+            <Loading />
+        </div>
+    );
 
-    if (error) {
-        return <NotFound />;
-    }
+    if (error) return (
+        <NotFound />
+    );
 
     return (
         <>
             {/* banner */}
-            <figure className="relative w-full aspect-[18/9] sm:aspect-[28/9] lg:aspect-[32/9] xl:aspect-[40/9] rounded-xl overflow-hidden">
-                <Image
-                    src={`/Blogs/${data.title}.webp`}
-                    alt={data.title}
-                    className="size-full"
-                />
-                <figcaption className="absolute top-0 left-0 flex flex-col items-center justify-center gap-0.5 size-full md:pb-16 p-3 bg-black/50">
-                    <h1 className="mb-3 text-white text-balance text-center">
-                        {data.title}
-                    </h1>
-                    <span className="text-sm text-neutral-200">
-                        {year}年创建（{fromNow(data.updated)}更新）
-                    </span>
-                    <span className="text-sm text-neutral-200">
-                        全篇约{data.minutes ?? 0}分钟（{data.minutes * 500}字）
-                    </span>
-                </figcaption>
-            </figure>
+            <div
+                className="absolute top-0 left-0 w-full aspect-square sm:aspect-[18/9] lg:aspect-[21/9] xl:aspect-[32/9] rounded-xl bg-cover bg-center bg-no-repeat bg-fixed overflow-hidden"
+                style={{
+                    backgroundImage: `url(${getImage(`/Blogs/${data.title}.webp`)})`
+                }}
+            >
+                <div className="absolute top-0 left-0 size-full rounded-xl backdrop-brightness-50 backdrop-blur-sm" />
+            </div>
+            <div className="relative flex flex-col items-center gap-0.5 w-full mt-8 sm:mt-16 mb-4 sm:mb-8 p-3">
+                <h1 className="mb-3 text-white text-balance text-center">
+                    {data.title}
+                </h1>
+                <span className="text-sm text-neutral-200">
+                    创建于{year}年
+                </span>
+                <span className="text-sm text-neutral-200">
+                    全篇约{data.minutes ?? 0}分钟
+                </span>
+            </div>
 
             {/* article */}
             <article
                 ref={articleRef}
-                className="prose prose-neutral prose-img:inline prose-img:max-h-96 prose-img:mr-3 prose-img:mt-0 prose-img:mb-3 prose-img:shadow prose-img:rounded-xl prose-pre:rounded-xl md:-translate-y-20 p-5 mx-auto rounded-xl shadow-xl bg-white overflow-x-hidden transition dark:prose-invert prose-blockquote:dark:border-s-neutral-500 prose-pre:dark:bg-neutral-900 dark:bg-neutral-800"
+                className="relative prose prose-neutral prose-img:inline prose-img:max-h-96 prose-img:mr-3 prose-img:mt-0 prose-img:mb-3 prose-img:shadow prose-img:rounded-xl prose-pre:rounded-xl p-5 mx-auto rounded-xl shadow-xl bg-white overflow-x-hidden transition dark:prose-invert prose-blockquote:dark:border-s-neutral-500 prose-pre:dark:bg-neutral-900 dark:bg-neutral-800"
                 dangerouslySetInnerHTML={{ __html: data.content ?? "" }}
             />
 
             {/* gadgets */}
             <div className="fixed bottom-3 right-6 flex flex-col items-end gap-3">
                 {/* catalog */}
-                <div
-                    className={clsx(
-                        "max-h-96 max-w-72 p-3 rounded-xl shadow-lg bg-white overflow-x-hidden overflow-y-auto transition-all dark:bg-neutral-700",
-                        !isCatalogVisible && "invisible opacity-0"
-                    )}
-                >
-                    {catalog.map((header) => (
-                        <a
-                            key={header.id}
-                            href={`#${header.id}`}
-                            style={header.style}
-                            className="block text-neutral-700 truncate transition dark:text-neutral-200"
-                        >
-                            {header.text}
-                        </a>
-                    ))}
+                <div className={clsx(
+                    "flex flex-col gap-2 w-48 max-h-96 p-3 rounded-xl shadow-lg bg-white overflow-x-hidden overflow-y-auto transition-all dark:bg-neutral-700",
+                    !isCatalogVisible && "invisible opacity-0"
+                )}>
+                    {catalog.map((header) => {
+                        const isHeadline = header.style.marginLeft === 0;
+                        return (
+                            <a
+                                key={header.id}
+                                href={`#${header.id}`}
+                                style={header.style}
+                                className={clsx(
+                                    "relative block shrink-0 truncate text-sm text-neutral-500 transition duration-150 hover:duration-0 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-100",
+                                    isHeadline && "pl-3 before:absolute before:top-0 before:bottom-0 before:left-0 before:my-auto before:w-1 before:h-4 before:rounded-full before:bg-current"
+                                )}
+                            >
+                                {header.text}
+                            </a>
+                        );
+                    })}
                 </div>
                 <Toggle value={isCatalogVisible} onChange={setIsCatalogVisible} />
                 {/* back top */}

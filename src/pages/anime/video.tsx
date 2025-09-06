@@ -1,5 +1,5 @@
 import { useSocket } from "@/contexts/socket";
-import { getAnimeVideoByEP, to } from "@/helpers/network";
+import { getAnimeVideoByEp, to } from "@/helpers/network";
 import { qs } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
 import { useRouter } from "@/hooks/store";
@@ -230,7 +230,7 @@ const Video = ({
         >
             <video
                 ref={videoRef}
-                src={getAnimeVideoByEP(anime, ep)}
+                src={getAnimeVideoByEp(anime, ep)}
                 controls={isHost}
                 className="absolute top-0 left-0 size-full"
             />
