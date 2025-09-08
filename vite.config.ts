@@ -6,22 +6,22 @@ import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "src"),
+        },
     },
-  },
-  plugins: [
-    tailwindcss(),
-    preact(),
-    // visualizer({
-    //   open: true,
-    //   filename: "dist/stats.html",
-    //   gzipSize: true,
-    //   brotliSize: true,
-    // }),
-  ],
-  build: {
-    outDir: "D:/nginx/html",
-  },
+    plugins: [
+        tailwindcss(),
+        preact(),
+        visualizer({
+            open: true,
+            filename: "dist/stats.html",
+            gzipSize: true,
+            brotliSize: true,
+        }),
+    ],
+    build: {
+        outDir: "D:/nginx/html",
+    },
 });

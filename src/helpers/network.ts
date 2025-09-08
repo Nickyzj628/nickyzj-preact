@@ -13,7 +13,7 @@ import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/helpers/constant";
  *     },
  * });
  */
-export const request = async <T>(path: string, options: RequestInit = {}) => {
+export const request = async <T>(path: string, options: Recordable = {}) => {
     // 处理 body 为对象的情况
     if (typeof options.body === "object" && !(options.body instanceof FormData)) {
         options.body = JSON.stringify(options.body);

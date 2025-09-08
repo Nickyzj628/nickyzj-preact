@@ -3,7 +3,7 @@ import Loading from "@/components/loading";
 import Section from "@/components/section";
 import Timeline from "@/components/timeline";
 import { clsx } from "@/helpers/string";
-import { useAnimes } from "@/hooks/store";
+import { useAnimes } from "@/hooks/store/use-anime";
 import dayjs from "dayjs";
 import { ComponentChildren } from "preact";
 import { useCallback, useMemo } from "preact/hooks";

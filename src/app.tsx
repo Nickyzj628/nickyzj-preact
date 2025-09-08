@@ -1,8 +1,8 @@
+import { routes, ROUTES_VISIBLE_AT_NAVBAR } from "@/helpers/routes";
 import { clsx } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
 import { useIsMobile } from "@/hooks/device";
-import { useUser } from "@/hooks/store";
-import { routes, ROUTES_VISIBLE_AT_NAVBAR } from "@/stores/routes";
+import useUser from "@/hooks/store/use-user";
 import dayjs from "dayjs";
 import "dayjs/locale/zh-cn";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -46,7 +46,7 @@ const Header = () => {
      * 用户相关
      */
 
-    const user = useUser();
+    const [user] = useUser();
 
     const onClickMessage = () => {
         toast("消息模块开发中！");

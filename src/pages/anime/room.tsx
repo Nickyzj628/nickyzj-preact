@@ -1,6 +1,6 @@
 import { useSocket } from "@/contexts/socket";
 import { copyToClipboard } from "@/helpers/dom";
-import { useUser } from "@/hooks/store";
+import useUser from "@/hooks/store/use-user";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";

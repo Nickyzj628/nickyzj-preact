@@ -1,4 +1,4 @@
-import { useAnimes } from "@/hooks/store";
+import { useAnimes } from "@/hooks/store/use-anime";
 import { useState } from "preact/hooks";
 import Loading from "../loading";
 import AnimeEditDrawer from "./anime-edit-drawer";

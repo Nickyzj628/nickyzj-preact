@@ -1,4 +1,4 @@
-import { useBlogs } from "@/hooks/store";
+import { useBlogs } from "@/hooks/store/use-blog";
 import { useState } from "preact/hooks";
 import Loading from "../loading";
 import BlogEditDrawer from "./blog-edit-drawer";

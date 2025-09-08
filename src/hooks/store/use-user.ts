@@ -1,7 +1,11 @@
-import { $user } from "@/stores/user";
-import { useStore } from "@nanostores/preact";
+import { random } from "@/helpers/number";
+import { createGlobalState } from "react-use";
 
-export const useUser = () => {
-    const user = useStore($user);
-    return user;
-};
+const randomID = random(1000, 9999);
+
+const useUser = createGlobalState({
+    id: randomID,
+    name: `无名客${randomID}`,
+});
+
+export default useUser;

@@ -1,5 +1,5 @@
 import { getPeriod } from "@/helpers/time";
-import { useUser } from "@/hooks/store";
+import useUser from "@/hooks/store/use-user";
 import RecentAnimes from "./recent-animes";
 import RecentBlogs from "./recent-blogs";
 import Shanbay from "./shanbay";

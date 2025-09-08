@@ -5,7 +5,7 @@ import { setTitle } from "@/helpers/dom";
 import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
 import { useZoom } from "@/hooks/observer";
-import { useBlog } from "@/hooks/store";
+import { useBlog } from "@/hooks/store/use-blog";
 import NotFound from "@/pages/not-found";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { useHash } from "react-use";

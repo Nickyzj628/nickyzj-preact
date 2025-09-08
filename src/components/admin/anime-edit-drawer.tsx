@@ -1,4 +1,4 @@
-import { useAnimeMutation } from "@/hooks/store";
+import { useAnimeMutation } from "@/hooks/store/use-anime";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";

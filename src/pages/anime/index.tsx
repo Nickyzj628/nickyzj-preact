@@ -2,7 +2,7 @@ import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
 import { SocketProvider } from "@/contexts/socket";
 import { setTitle } from "@/helpers/dom";
-import { useAnime } from "@/hooks/store";
+import { useAnime } from "@/hooks/store/use-anime";
 import Episodes from "@/pages/anime/episodes";
 import Room from "@/pages/anime/room";
 import Video from "@/pages/anime/video";

@@ -3,7 +3,7 @@ import Section from "@/components/section";
 import { clsx } from "@/helpers/string";
 import { fromNow } from "@/helpers/time";
 import { useInViewport } from "@/hooks/observer";
-import { useBlogs } from "@/hooks/store";
+import { useBlogs } from "@/hooks/store/use-blog";
 import { useEffect, useState } from "preact/hooks";
 import { Link } from "wouter-preact";
 

@@ -2,7 +2,7 @@ import { Figcaption, Figure } from "@/components/figure";
 import Loading from "@/components/loading";
 import Section from "@/components/section";
 import { clsx } from "@/helpers/string";
-import { useShanbay } from "@/hooks/store";
+import { useShanbay } from "@/hooks/store/use-shanbay";
 import { ComponentChildren } from "preact";
 
 type ContainerProps = {

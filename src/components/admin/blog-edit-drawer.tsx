@@ -1,4 +1,4 @@
-import { useBlogMutation } from "@/hooks/store";
+import { useBlogMutation } from "@/hooks/store/use-blog";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";
