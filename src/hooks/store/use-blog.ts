@@ -1,24 +1,20 @@
-import { PAGE_SIZE } from "@/constants";
 import { createBlogMutatorStore, createBlogsStore, createBlogStore } from "@/stores/fethcer";
 import { useStore } from "@nanostores/preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 
 type Props = {
     page?: number;
-    pageSize?: number;
 };
 
 export const useBlogs = (props?: Props) => {
     const {
         page = 1,
-        pageSize = PAGE_SIZE,
     } = props ?? {};
 
     const [_page, setPage] = useState(page);
 
     const $blogs = useMemo(() => createBlogsStore({
         page: _page,
-        pageSize,
     }), [_page]);
 
     const { data, error, loading } = useStore($blogs);
@@ -41,7 +37,6 @@ export const useBlogs = (props?: Props) => {
         error,
         isLoading,
         page: _page,
-        pageSize,
         hasNext,
         hasPrev,
         nextPage,

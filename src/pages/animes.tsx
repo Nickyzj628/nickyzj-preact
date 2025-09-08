@@ -1,14 +1,14 @@
 import { Figcaption, Figure } from "@/components/figure";
 import Section from "@/components/section";
-import { PAGE_SIZE } from "@/constants";
 import { clsx } from "@/helpers/string";
 import { fromNow } from "@/helpers/time";
 import { useInViewport } from "@/hooks/observer";
 import { useAnimes } from "@/hooks/store";
 import { useEffect, useState } from "preact/hooks";
+import { Link } from "wouter-preact";
 
 const Skeletons = () => {
-    return Array.from({ length: PAGE_SIZE }).map((_, i) => (
+    return Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className="aspect-[2/3] rounded-xl bg-neutral-200 transition dark:bg-neutral-800" />
     ));
 };
@@ -43,7 +43,7 @@ const Page = ({ page = 1 }: Partial<AnimesParams>) => {
             </Section.Title>
             {animes.map((anime, i) => {
                 return (
-                    <a
+                    <Link
                         key={anime.title}
                         href={`/animes/${anime.season}/${anime.title}`}
                         className="flex aspect-[2/3]"
@@ -62,7 +62,7 @@ const Page = ({ page = 1 }: Partial<AnimesParams>) => {
                                 </Figcaption.Extra>
                             </Figcaption>
                         </Figure>
-                    </a>
+                    </Link>
                 )
             })}
             {hasNext && !isRenderNext && (

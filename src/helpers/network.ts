@@ -1,4 +1,4 @@
-import { BACKEND_PORT, BASE_URL, DUFS_PORT } from "@/constants";
+import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/helpers/constant";
 
 /**
  * 向 Amadeus 后端发送请求
@@ -57,7 +57,7 @@ export const to = async <T, U = Error>(promise: Promise<T>): Promise<[null, T] |
  * const src = getImage("/Nickyzj/Photos/Blogs/猩猩也能懂的Node.js部署教程.webp");
  */
 export const getImage = (path: string) => {
-    return `${BASE_URL}:${DUFS_PORT}/Nickyzj/Photos${path}`;
+    return `${BASE_URL}:${WEBDAV_PORT}/Nickyzj/Photos${path}`;
 };
 
 /**
@@ -74,5 +74,5 @@ export const getAnimeVideoByEp = (anime: Anime, ep = 1) => {
     if (!episode) {
         return "";
     }
-    return `${BASE_URL}:${DUFS_PORT}/Nickyzj/Animes/${anime.season}/${anime.title}/${episode}`;
+    return `${BASE_URL}:${WEBDAV_PORT}/Nickyzj/Animes/${anime.season}/${anime.title}/${episode}`;
 };

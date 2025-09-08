@@ -1,11 +1,11 @@
+import Loading from "@/components/loading";
+import Section from "@/components/section";
 import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
 import { fromNow } from "@/helpers/time";
 import { useBlogs } from "@/hooks/store";
 import { ComponentChildren } from "preact";
-import { useMemo } from "preact/hooks";
-import Loading from "../loading";
-import Section from "../section";
+import { Link } from "wouter-preact";
 
 type ContainerProps = {
   className?: string;
@@ -50,7 +50,7 @@ const RecentBlogs = () => {
   return (
     <Container>
       {blogs.map((blog, i) => (
-        <a
+        <Link
           key={blog.title}
           href={`/blogs/${blog.year}/${blog.title}`}
           className="flex flex-1 w-full bg-zinc-200 bg-center bg-cover"
@@ -71,7 +71,7 @@ const RecentBlogs = () => {
               {fromNow(blog.updated)}更新
             </span>
           </div>
-        </a>
+        </Link>
       ))}
     </Container>
   );

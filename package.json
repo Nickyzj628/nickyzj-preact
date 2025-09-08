@@ -17,9 +17,10 @@
     "nanostores": "^1.0.1",
     "preact": "^10.26.5",
     "react-hot-toast": "^2.6.0",
-    "rooks": "^9.2.0",
+    "react-use": "^17.6.0",
     "socket.io-client": "^4.8.1",
-    "tailwindcss": "^4.1.4"
+    "tailwindcss": "^4.1.4",
+    "wouter-preact": "^3.7.1"
   },
   "devDependencies": {
     "@iconify-json/mingcute": "^1.2.3",

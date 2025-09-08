@@ -1,8 +1,8 @@
-import RecentAnimes from "@/components/home/recent-animes";
-import RecentBlogs from "@/components/home/recent-blogs";
-import Shanbay from "@/components/home/shanbay";
 import { getPeriod } from "@/helpers/time";
 import { useUser } from "@/hooks/store";
+import RecentAnimes from "./recent-animes";
+import RecentBlogs from "./recent-blogs";
+import Shanbay from "./shanbay";
 
 const Page = () => {
     const user = useUser();
@@ -13,9 +13,7 @@ const Page = () => {
                 <h4 className="text-neutral-500 dark:text-neutral-400">
                     {getPeriod()}好，欢迎回来：
                 </h4>
-                <h1>
-                    {user.name}
-                </h1>
+                <h1>{user.name}</h1>
             </div>
             <Shanbay />
             <RecentBlogs />

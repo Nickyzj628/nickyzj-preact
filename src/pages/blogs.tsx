@@ -1,14 +1,14 @@
 import { Figcaption, Figure } from "@/components/figure";
 import Section from "@/components/section";
-import { PAGE_SIZE } from "@/constants";
 import { clsx } from "@/helpers/string";
 import { fromNow } from "@/helpers/time";
 import { useInViewport } from "@/hooks/observer";
 import { useBlogs } from "@/hooks/store";
 import { useEffect, useState } from "preact/hooks";
+import { Link } from "wouter-preact";
 
 const Skeletons = () => {
-    return Array.from({ length: PAGE_SIZE }).map((_, i) => (
+    return Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className="aspect-[4/3] rounded-xl bg-neutral-200 transition dark:bg-neutral-800" />
     ));
 };
@@ -43,7 +43,7 @@ const Page = ({ page = 1 }: Partial<BlogsParams>) => {
             </Section.Title>
             {blogs.map((blog, i) => {
                 return (
-                    <a
+                    <Link
                         key={blog.title}
                         href={`/blogs/${blog.year}/${blog.title}`}
                         className="flex aspect-[4/3]"
@@ -59,7 +59,7 @@ const Page = ({ page = 1 }: Partial<BlogsParams>) => {
                                 </Figcaption.Extra>
                             </Figcaption>
                         </Figure>
-                    </a>
+                    </Link>
                 )
             })}
             {hasNext && !isRenderNext && (

@@ -1,5 +1,5 @@
 import { clsx } from "@/helpers/string";
-import { delay } from "@/helpers/time";
+import { sleep } from "@/helpers/time";
 import { ComponentChildren } from "preact";
 import { createPortal } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
@@ -28,13 +28,13 @@ const Drawer = ({
 
     const onOpen = async () => {
         setLifeCycle(LifeCycle.BeforeOpen);
-        await delay(30);
+        await sleep(30);
         setLifeCycle(LifeCycle.Opened);
     };
 
     const _onClose = async () => {
         setLifeCycle(LifeCycle.BeforeClose);
-        await delay(150);
+        await sleep(150);
         onClose();
         setLifeCycle(LifeCycle.Closed);
     };

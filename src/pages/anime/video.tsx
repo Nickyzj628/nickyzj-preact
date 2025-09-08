@@ -1,42 +1,40 @@
 import { useSocket } from "@/contexts/socket";
 import { getAnimeVideoByEp, to } from "@/helpers/network";
-import { qs } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
-import { useRouter } from "@/hooks/store";
-import { $router } from "@/stores/router";
 import Danmaku from "danmaku/dist/esm/danmaku.dom.js";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";
+import { useSearchParams } from "wouter-preact";
 
 type Props = {
     anime: Anime;
-    ep: number;
     isHost?: boolean;
 };
 
 const Video = ({
     anime,
-    ep,
     isHost = true,
 }: Props) => {
-    const router = useRouter();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const ep = Number(searchParams.get("ep")) || 1;
+
     const socket = useSocket();
 
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
 
-
     /**
-    * 弹幕处理逻辑
+    * 弹幕发射逻辑
     */
 
     useEffect(() => {
-        if (!socket) {
+        const container = containerRef.current;
+        if (!socket || !container) {
             return;
         }
 
         const danmaku = new Danmaku({
-            container: containerRef.current,
+            container,
         });
         const onRoomMessage = (message: RoomMessage) => {
             danmaku.emit({
@@ -48,7 +46,6 @@ const Video = ({
                 },
             });
         };
-
         socket.on("roomMessage", onRoomMessage);
 
         return () => {
@@ -137,7 +134,7 @@ const Video = ({
      */
 
     // 视频被房主播放前，用户必须和页面有过交互
-    // play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
+    // 原因：play() failed because the user didn't interact with the document first. https://goo.gl/xX8pDD
     const [needInteract, setNeedInteract] = useState(false);
 
     const bePlayed = async () => {
@@ -177,8 +174,10 @@ const Video = ({
     };
 
     const beEpChanged = (ep: number) => {
-        const queryString = qs.stringify({ ...router.search, ep }, { addQueryPrefix: true });
-        $router.open(`${router.path}${queryString}`);
+        setSearchParams((prev) => {
+            prev.set("ep", ep.toString());
+            return prev;
+        }, { replace: true });
         toast(`房主切换到了第${ep}话`);
     };
 
@@ -194,7 +193,7 @@ const Video = ({
         }
     };
 
-    // 主动同步视频时间、速率等信息
+    // 请求同步视频时间、速率等信息
     const syncVideo = () => {
         socket.emit("syncVideo");
     };

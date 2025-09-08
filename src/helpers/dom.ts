@@ -60,6 +60,20 @@ export const getChildrenByTag = <K extends keyof HTMLElementTagNameMap>(
     return elements;
 };
 
+const copyToClipboardFallback = (text: string) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed"; // 防止页面滚动
+
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    const done = document.execCommand("copy");
+    toast.success(done ? "复制到剪贴板成功" : "复制但剪贴板失败，请手动复制");
+    document.body.removeChild(textarea);
+};
+
 /**
  * 复制文本到剪贴板
  * @param text 要复制的文本
@@ -68,7 +82,7 @@ export const getChildrenByTag = <K extends keyof HTMLElementTagNameMap>(
  */
 export const copyToClipboard = async (text: string) => {
     if (!navigator.clipboard) {
-        toast.error(`当前环境不支持 Clipboard API，请手动复制：${text}`, { duration: 10000 });
+        copyToClipboardFallback(text);
         return;
     }
 

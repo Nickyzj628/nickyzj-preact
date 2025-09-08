@@ -1,38 +1,36 @@
 import { useSocket } from "@/contexts/socket";
 import { copyToClipboard } from "@/helpers/dom";
-import { qs } from "@/helpers/string";
-import { useRouter, useUser } from "@/hooks/store";
-import { $router } from "@/stores/router";
+import { useUser } from "@/hooks/store";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";
-import Badge from "../../components/badge";
+import { useSearchParams } from "wouter-preact";
+import Badge, { BadgeType } from "../../components/badge";
 
-const getBadgeInfo = (message: RoomMessage): { type: "default" | "info" | "danger" | "invert", role: string } => {
-    if (message.type === "system") {
-        return {
-            type: "danger",
-            role: "系统",
-        };
-    }
-    if (message.type === "host") {
-        return {
-            type: "info",
-            role: "房主",
-        };
-    }
-    return {
-        type: "invert",
+const getBadgeInfo = (message: RoomMessage) => {
+    const result = {
+        type: "invert" as BadgeType,
         role: "观众",
     };
+
+    if (message.type === "system") {
+        result.type = "danger";
+        result.role = "系统";
+    } else if (message.type === "host") {
+        result.type = "info";
+        result.role = "房主";
+    }
+
+    return result;
 };
 
 const Room = ({
     isHost = true,
     onChangeHost = (isHost: boolean) => void 0,
 }) => {
-    const router = useRouter();
-    const { roomId } = router.search;
+    const [searchParams, setSearchParams] = useSearchParams();
+    const roomId = searchParams.get("roomId");
+
     const { name: userName } = useUser();
 
     const socket = useSocket();
@@ -56,23 +54,25 @@ const Room = ({
         }
     }, [socket, socketId, roomId, isInRoom]);
 
-    // 房间进出相关事件
+    // 房间进出事件
     useEffect(() => {
         if (!socket) {
             return;
         }
 
-        const onRoomCreated = async (roomId) => {
-            const queryString = qs.stringify({
-                ...qs.parse(location.search),
-                roomId
-            });
-            $router.open(`${router.path}?${queryString}`);
+        const onRoomCreated = async (roomId: string) => {
+            setSearchParams((prev) => {
+                prev.set("roomId", roomId);
+                return prev;
+            }, { replace: true });
             setIsInRoom(true);
             onChangeHost(true);
+
             toast.success(<>
-                <span>房间创建成功！</span>
-                <span className="text-blue-500 cursor-pointer" onClick={() => copyToClipboard(location.href)}>点我复制链接到剪贴板</span>
+                房间创建成功！
+                <span className="text-blue-500 cursor-pointer" onClick={() => copyToClipboard(window.location.href)}>
+                    点我复制链接到剪贴板
+                </span>
             </>, { duration: 10000 });
         };
 
@@ -106,7 +106,6 @@ const Room = ({
     // 发消息
     const onSendMessage = (e: FormEvent) => {
         e.preventDefault();
-
         if (!socket) {
             return;
         }
@@ -128,7 +127,6 @@ const Room = ({
         const onRoomMessage = (message: RoomMessage) => {
             setMessages((prev) => [...prev, message]);
         };
-
         socket.on("roomMessage", onRoomMessage);
 
         return () => {
@@ -139,33 +137,29 @@ const Room = ({
     // 聊天框自动滚动至底部
     const messagesRef = useRef<HTMLUListElement>(null);
     useEffect(() => {
-        if (!messagesRef.current) {
-            return;
+        const element = messagesRef.current;
+        if (element) {
+            element.scrollTop = element.scrollHeight;
         }
-        messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
     }, [messages]);
 
-    if (!isInRoom) {
-        return (
-            <button className="w-full justify-center" onClick={onCreateRoom}>
-                创建房间
-            </button>
-        );
-    }
+    if (!isInRoom) return (
+        <button className="w-full justify-center" onClick={onCreateRoom}>
+            创建房间
+        </button>
+    );
 
     return <>
         <ul ref={messagesRef} className="flex flex-1 flex-col gap-2 overflow-y-auto">
             {messages.map((message, index) => {
-                const badgeInfo = getBadgeInfo(message);
+                const badge = getBadgeInfo(message);
                 return (
                     <li key={index} className="flex items-start gap-1">
-                        <Badge type={badgeInfo.type}>
-                            {badgeInfo.role}
+                        <Badge type={badge.type}>
+                            {badge.role}
                         </Badge>
                         <div className="flex-1 text-neutral-800 transition dark:text-neutral-200">
-                            {message.userName && (
-                                <strong>{message.userName}：</strong>
-                            )}
+                            <strong>{message.userName}：</strong>
                             <span>{message.text}</span>
                         </div>
                     </li>
@@ -176,7 +170,7 @@ const Room = ({
             <input
                 name="text"
                 placeholder="点击输入文本"
-                className="py-2 sm:py-2.5 px-3 block w-full border-gray-200 outline-none rounded-xl sm:text-sm transition focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                className="px-3 py-2 sm:py-2.5 block w-full border-neutral-200 outline-none rounded-xl sm:text-sm transition focus:border-blue-500 focus:ring-blue-500 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
             />
         </form>
     </>;

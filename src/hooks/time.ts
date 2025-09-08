@@ -4,10 +4,14 @@ export const useNextTick = (callback: () => void) => {
     const [shouldRun, setShouldRun] = useState(false);
 
     useEffect(() => {
-        if (!shouldRun) return;
+        if (!shouldRun) {
+            return;
+        }
         callback();
         setShouldRun(false);
     }, [shouldRun]);
 
-    return () => setShouldRun(true);
+    return () => {
+        setShouldRun(true);
+    };
 };

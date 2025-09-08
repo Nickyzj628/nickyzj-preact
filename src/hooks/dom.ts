@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "preact/hooks";
+import { useCallback, useEffect, useState } from "preact/hooks";
 
 export const useSize = () => {
     const [element, setElement] = useState<HTMLElement | null>(null);
@@ -12,7 +12,9 @@ export const useSize = () => {
     });
 
     useEffect(() => {
-        if (!element) return;
+        if (!element) {
+            return;
+        }
 
         const updateSize = () => {
             const rect = element.getBoundingClientRect();

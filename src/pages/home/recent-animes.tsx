@@ -1,12 +1,13 @@
+import { Figcaption, Figure } from "@/components/figure";
+import Loading from "@/components/loading";
+import Section from "@/components/section";
+import Timeline from "@/components/timeline";
 import { clsx } from "@/helpers/string";
 import { useAnimes } from "@/hooks/store";
 import dayjs from "dayjs";
 import { ComponentChildren } from "preact";
 import { useCallback, useMemo } from "preact/hooks";
-import { Figcaption, Figure } from "../figure";
-import Loading from "../loading";
-import Section from "../section";
-import Timeline from "../timeline";
+import { Link } from "wouter-preact";
 
 type ContainerProps = {
     className?: string;
@@ -88,7 +89,7 @@ const RecentAnimes = () => {
                     time={group[0].dayDiffLocale}
                 >
                     {group.map((anime) => (
-                        <a
+                        <Link
                             key={anime.title}
                             href={`/animes/${anime.season}/${anime.title}?ep=${anime.eps}`}
                         >
@@ -106,7 +107,7 @@ const RecentAnimes = () => {
                                     </Figcaption.Description>
                                 </Figcaption>
                             </Figure>
-                        </a>
+                        </Link>
                     ))}
                 </Timeline>
             ))}

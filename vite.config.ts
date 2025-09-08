@@ -14,12 +14,12 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     preact(),
-    visualizer({
-      open: true,
-      filename: "dist/stats.html",
-      gzipSize: true,
-      brotliSize: true,
-    }),
+    // visualizer({
+    //   open: true,
+    //   filename: "dist/stats.html",
+    //   gzipSize: true,
+    //   brotliSize: true,
+    // }),
   ],
   build: {
     outDir: "D:/nginx/html",

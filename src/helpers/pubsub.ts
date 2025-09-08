@@ -1,7 +1,9 @@
 const events: Record<string, ((data: any) => void)[]> = {};
 
 const unsubscribe = (eventName: string, callback: (data: any) => void) => {
-    if (!events[eventName]) return;
+    if (!events[eventName]) {
+        return;
+    }
 
     events[eventName] = events[eventName].filter((cb) => cb !== callback);
 };
@@ -16,7 +18,9 @@ const subscribe = (eventName: string, callback: (data: any) => void) => {
 };
 
 const publish = (eventName: string, data: any) => {
-    if (!events[eventName]) return;
+    if (!events[eventName]) {
+        return;
+    }
 
     events[eventName].forEach((callback) => callback(data));
 };

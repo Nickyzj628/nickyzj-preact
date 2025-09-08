@@ -1,22 +1,32 @@
 import "@/assets/hljs.css";
-import Image from "@/components/image";
 import Loading from "@/components/loading";
 import Toggle from "@/components/toggle";
+import { setTitle } from "@/helpers/dom";
 import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
-import { useTitle } from "@/hooks/dom";
 import { useZoom } from "@/hooks/observer";
-import { useBlog, useRouter } from "@/hooks/store";
+import { useBlog } from "@/hooks/store";
 import NotFound from "@/pages/not-found";
 import { useEffect, useMemo, useState } from "preact/hooks";
+import { useHash } from "react-use";
+import { useParams } from "wouter-preact";
+
+type Params = {
+    id: string;
+    year: string;
+};
 
 const Page = () => {
-    const router = useRouter();
-    const { id, year } = router.params;
+    const { id, year } = useParams<Params>();
+    const [hash] = useHash();
 
     // 获取文章详情
     const { data, error, isLoading } = useBlog(parseInt(year), id);
-    useTitle(data?.title);
+    useEffect(() => {
+        if (data?.title) {
+            setTitle(data.title);
+        }
+    }, [data]);
 
     // 生成目录
     const [isCatalogVisible, setIsCatalogVisible] = useState(window.innerWidth > 1152);
@@ -49,15 +59,15 @@ const Page = () => {
 
     // 锚点跳转
     useEffect(() => {
-        if (isLoading || !router.hash) {
+        if (isLoading || !hash) {
             return;
         }
 
         const a = document.getElementById(
-            decodeURIComponent(router.hash).replace("#", "")
+            decodeURIComponent(hash).replace("#", "")
         );
         a?.scrollIntoView();
-    }, [isLoading, router.hash]);
+    }, [isLoading, hash]);
 
     // 图片缩放
     const [articleRef] = useZoom();

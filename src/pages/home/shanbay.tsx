@@ -1,9 +1,9 @@
+import { Figcaption, Figure } from "@/components/figure";
+import Loading from "@/components/loading";
+import Section from "@/components/section";
 import { clsx } from "@/helpers/string";
 import { useShanbay } from "@/hooks/store";
 import { ComponentChildren } from "preact";
-import { Figcaption, Figure } from "../figure";
-import Loading from "../loading";
-import Section from "../section";
 
 type ContainerProps = {
   className?: string;

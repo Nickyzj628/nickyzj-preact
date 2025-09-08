@@ -1,24 +1,20 @@
-import { PAGE_SIZE } from "@/constants";
 import { createAnimeMutatorStore, createAnimesStore, createAnimeStore } from "@/stores/fethcer";
 import { useStore } from "@nanostores/preact";
 import { useCallback, useMemo, useState } from "preact/hooks";
 
 type Props = {
     page?: number;
-    pageSize?: number;
 };
 
 export const useAnimes = (props?: Props) => {
     const {
         page = 1,
-        pageSize = PAGE_SIZE,
     } = props ?? {};
 
     const [_page, setPage] = useState(page);
 
     const $animes = useMemo(() => createAnimesStore({
         page: _page,
-        pageSize,
     }), [_page]);
 
     const { data, error, loading } = useStore($animes);
@@ -41,7 +37,6 @@ export const useAnimes = (props?: Props) => {
         error,
         isLoading,
         page: _page,
-        pageSize,
         hasNext,
         hasPrev,
         nextPage,

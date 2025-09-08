@@ -1,7 +1,9 @@
 import { clsx } from "@/helpers/string";
 import { ReactNode } from "preact/compat";
 
-const typeClassName = {
+export type BadgeType = keyof typeof typeClassNameMap;
+
+const typeClassNameMap = {
     default: "bg-neutral-50 text-neutral-500 dark:bg-white/10 dark:text-white",
     info: "bg-blue-100 text-blue-800 dark:bg-blue-800/30 dark:text-blue-500",
     success: "bg-teal-100 text-teal-800 dark:bg-teal-800/30 dark:text-teal-500",
@@ -15,12 +17,12 @@ const Badge = ({
     className = "",
     children,
 }: {
-    type?: keyof typeof typeClassName,
+    type?: BadgeType,
     className?: string,
     children?: ReactNode,
 }) => {
     return (
-        <span className={clsx(`inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded-lg text-xs font-medium transition ${typeClassName[type]}`, className)}>
+        <span className={clsx(`inline-flex items-center gap-x-1.5 py-1 px-2.5 rounded-lg text-xs font-medium transition ${typeClassNameMap[type]}`, className)}>
             {children}
         </span>
     );
