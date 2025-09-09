@@ -5,7 +5,7 @@ import RecentBlogs from "./recent-blogs";
 import Shanbay from "./shanbay";
 
 const Page = () => {
-    const user = useUser();
+    const [user] = useUser();
 
     return (
         <>

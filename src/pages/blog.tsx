@@ -12,26 +12,23 @@ import { useHash } from "react-use";
 import { useParams } from "wouter-preact";
 
 type Params = {
-    id: string;
+    title: string;
     year: string;
 };
 
 const Page = () => {
-    const { id, year } = useParams<Params>();
+    const { title, year } = useParams<Params>();
     const [hash] = useHash();
 
-    // 获取文章详情
-    const { data, error, isLoading } = useBlog(parseInt(year), id);
+    const { isLoading, error, data } = useBlog(parseInt(year), title);
     useEffect(() => {
-        if (data?.title) {
-            setTitle(data.title);
-        }
+        setTitle(data?.title ?? "加载中");
     }, [data]);
 
     // 生成目录
     const [isCatalogVisible, setIsCatalogVisible] = useState(window.innerWidth > 1152);
     const catalog = useMemo(() => {
-        if (!data || !data.content) {
+        if (!data?.content) {
             return [];
         }
 
@@ -40,21 +37,28 @@ const Page = () => {
             return [];
         }
 
+        const ids = headers
+            .map((header) => {
+                return header.match(/(?<=id=").+(?=">)/)?.[0];
+            })
+            .filter((id) => !!id);
+        if (ids.length !== headers.length) {
+            return [];
+        }
+
         const levels = headers.map((header) => Number(header[2]));
         const baseLevel = Math.min(...levels);
+
         return headers.map((header, i) => {
             const level = levels[i];
-            const id = header.match(/(?<=id=").+(?=">)/)?.[0];
-            if (!id) {
-                return;
-            }
+            const id = ids[i];
 
             return {
                 id,
                 text: header.slice(10 + id.length, -5),
                 style: { marginLeft: (level - baseLevel) * 8 },
             };
-        }).filter((header) => !!header);
+        });
     }, [data]);
 
     // 锚点跳转

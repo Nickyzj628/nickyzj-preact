@@ -21,10 +21,10 @@ const Page = () => {
                     番剧
                 </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value={Tab.Blogs}>
+            <Tabs.Content value={Tab.Blogs} keepAlive={false}>
                 <Blogs />
             </Tabs.Content>
-            <Tabs.Content value={Tab.Animes}>
+            <Tabs.Content value={Tab.Animes} keepAlive={false}>
                 <Animes />
             </Tabs.Content>
         </Tabs>

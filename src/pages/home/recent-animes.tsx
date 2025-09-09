@@ -5,113 +5,95 @@ import Timeline from "@/components/timeline";
 import { clsx } from "@/helpers/string";
 import { useAnimes } from "@/hooks/store/use-anime";
 import dayjs from "dayjs";
-import { ComponentChildren } from "preact";
-import { useCallback, useMemo } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 import { Link } from "wouter-preact";
-
-type ContainerProps = {
-    className?: string;
-    bodyClassName?: string;
-    children: ComponentChildren;
-};
 
 type GroupedAnimes = (Anime & {
     dayDiff: number;
     dayDiffLocale: string;
 })[][];
 
-const DAY_LOCALE_STRING = ["今天", "昨天", "前天"];
-
-const Container = ({ className, bodyClassName, children }: ContainerProps) => {
-    return (
-        <Section className={clsx("flex flex-col flex-1 gap-1.5 min-w-72 w-full sm:w-80 lg:w-96 h-[36rem] mt-2", className)}>
-            <Section.Title className="text-yellow-300">本季新番</Section.Title>
-            <div className={clsx("relative flex flex-col flex-1 p-3 text-zinc-400 rounded-xl bg-zinc-100 overflow-x-hidden transition dark:text-zinc-500 dark:bg-zinc-800", bodyClassName)}>
-                {children}
-            </div>
-        </Section>
-    );
-};
+const DAY_DIFF_LOCALE_STRINGS = ["今天", "昨天", "前天"];
 
 const RecentAnimes = () => {
-    const { data, error, isLoading } = useAnimes();
+    const { isLoading, error, data } = useAnimes();
+    const animes = data?.data ?? [];
 
-    const dayDiffToLocale = useCallback((diffDay: number) => {
-        if (diffDay >= DAY_LOCALE_STRING.length) return `${diffDay}天前`;
-        return DAY_LOCALE_STRING[diffDay];
-    }, []);
+    const dayDiffToLocaleString = (dayDiff: number) => {
+        if (dayDiff >= DAY_DIFF_LOCALE_STRINGS.length) {
+            return `${dayDiff}天前`;
+        }
+        return DAY_DIFF_LOCALE_STRINGS[dayDiff];
+    };
 
     const groupedAnimes = useMemo<GroupedAnimes>(() => {
-        if (!data || !data.data) return [];
+        if (!animes || animes.length === 0) {
+            return [];
+        }
+
         const now = dayjs();
-        return data.data
-            .reduce((result, anime) => {
+        return animes.
+            reduce((result, anime) => {
                 const dayDiff = now.diff(dayjs(anime.updated), "day");
-                if (dayDiff > 30) {
-                    return result;
-                }
                 if (!result[dayDiff]) {
                     result[dayDiff] = [];
                 }
                 result[dayDiff].push({
                     ...anime,
                     dayDiff,
-                    dayDiffLocale: dayDiffToLocale(dayDiff),
+                    dayDiffLocale: dayDiffToLocaleString(dayDiff),
                 });
                 return result;
             }, [] as GroupedAnimes)
-    }, [data]);
-
-    if (isLoading) {
-        return (
-            <Container bodyClassName="items-center justify-center">
-                <Loading />
-            </Container>
-        );
-    }
-
-    if (error) {
-        return (
-            <Container bodyClassName="items-center justify-center">
-                <div>
-                    <div className="icon-[mingcute--pic-line] size-32" />
-                    <p className="text-center">{error.message}</p>
-                </div>
-            </Container>
-        );
-    }
+            .filter((group) => !!group)
+    }, [animes]);
 
     return (
-        <Container>
-            {groupedAnimes.map((group) => (
-                <Timeline
-                    key={group[0].dayDiff}
-                    time={group[0].dayDiffLocale}
-                >
-                    {group.map((anime) => (
-                        <Link
-                            key={anime.title}
-                            href={`/animes/${anime.season}/${anime.title}?ep=${anime.eps}`}
-                        >
-                            <Figure className="max-w-36 aspect-[2/3]">
-                                <Figure.Image
-                                    src={`/animes/${anime.title}.webp`}
-                                    alt={anime.title}
-                                />
-                                <Figcaption>
-                                    <Figcaption.Title className="text-base line-clamp-2">
-                                        {anime.title}
-                                    </Figcaption.Title>
-                                    <Figcaption.Description>
-                                        {`第${anime.eps}话`}
-                                    </Figcaption.Description>
-                                </Figcaption>
-                            </Figure>
-                        </Link>
-                    ))}
-                </Timeline>
-            ))}
-        </Container>
+        <Section className="flex flex-col flex-1 gap-1.5 min-w-72 w-full sm:w-80 lg:w-96 h-[36rem] mt-2">
+            <Section.Title className="text-yellow-300">本季新番</Section.Title>
+            <div className={clsx(
+                "relative flex flex-col flex-1 p-3 text-zinc-400 rounded-xl bg-zinc-100 overflow-x-hidden transition dark:text-zinc-500 dark:bg-zinc-800",
+                groupedAnimes.length === 0 && "items-center justify-center",
+            )}>
+                {isLoading && (
+                    <Loading />
+                )}
+                {error && (
+                    <div>
+                        <div className="icon-[mingcute--pic-line] size-32" />
+                        <p className="text-center">{error.message}</p>
+                    </div>
+                )}
+                {groupedAnimes.map((group) => (
+                    <Timeline
+                        key={group[0].dayDiff}
+                        time={group[0].dayDiffLocale}
+                    >
+                        {group.map((anime) => (
+                            <Link
+                                key={anime.title}
+                                href={`/animes/${anime.season}/${anime.title}?ep=${anime.eps}`}
+                            >
+                                <Figure className="max-w-36 aspect-[2/3]">
+                                    <Figure.Image
+                                        src={`/animes/${anime.title}.webp`}
+                                        alt={anime.title}
+                                    />
+                                    <Figcaption>
+                                        <Figcaption.Title className="text-base line-clamp-2">
+                                            {anime.title}
+                                        </Figcaption.Title>
+                                        <Figcaption.Description>
+                                            {`第${anime.eps}话`}
+                                        </Figcaption.Description>
+                                    </Figcaption>
+                                </Figure>
+                            </Link>
+                        ))}
+                    </Timeline>
+                ))}
+            </div>
+        </Section>
     );
 };
 

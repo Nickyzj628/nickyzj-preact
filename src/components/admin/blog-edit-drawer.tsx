@@ -1,3 +1,4 @@
+import { to } from "@/helpers/network";
 import { useBlogMutation } from "@/hooks/store/use-blog";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
@@ -26,16 +27,16 @@ const BlogEditDrawer = ({ data, isOpen, onClose }: Props) => {
         return `/default.webp`;
     }, [title, cover]);
 
-    const { mutate, loading } = useBlogMutation();
+    const { trigger, isMutating } = useBlogMutation(year, title);
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            await mutate({ title, year, cover });
-            toast.success("修改成功！");
-            onClose();
-        } catch (err) {
-            toast.error(`更新文章失败：${err.message}`);
+        const [error, response] = await to(trigger({ cover }));
+        if (error) {
+            toast.error(`修改失败：${error.message}`);
+            return;
         }
+        toast.success("修改成功！");
+        onClose();
     };
 
     return (
@@ -72,7 +73,7 @@ const BlogEditDrawer = ({ data, isOpen, onClose }: Props) => {
                 </div>
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={isMutating}
                     className="justify-center w-full"
                 >
                     提交

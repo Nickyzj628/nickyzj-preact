@@ -13,12 +13,11 @@ export const useIsMobile = () => {
         const onResize = () => {
             setIsMobile(checkIsMobile());
         };
-
         window.addEventListener("resize", onResize);
 
         return () => {
             window.removeEventListener("resize", onResize);
-        }
+        };
     }, []);
 
     return isMobile;

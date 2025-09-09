@@ -1,63 +1,91 @@
-import { createAnimeMutatorStore, createAnimesStore, createAnimeStore } from "@/stores/fethcer";
-import { useStore } from "@nanostores/preact";
-import { useCallback, useMemo, useState } from "preact/hooks";
+import { request } from "@/helpers/network";
+import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
+import useSWRMutation from "swr/mutation";
 
-type Props = {
-    page?: number;
-};
+/**
+ * 常规番剧列表请求，只能获取一页数据
+ * @example
+ * const { isLoading, error, data, hasNextPage } = useAnimes({ page: 1 });
+ */
+export const useAnimes = (options?: AnimesParams) => {
+    const { page = 1 } = options ?? {};
+    const { isLoading, error, data } = useSWR<AnimesResp>(`/animes?page=${page}`);
 
-export const useAnimes = (props?: Props) => {
-    const {
-        page = 1,
-    } = props ?? {};
-
-    const [_page, setPage] = useState(page);
-
-    const $animes = useMemo(() => createAnimesStore({
-        page: _page,
-    }), [_page]);
-
-    const { data, error, loading } = useStore($animes);
-    const isLoading = loading || (!data && !error);
-    const hasNext = _page < data?.pages;
-    const hasPrev = _page > 1;
-
-    const nextPage = useCallback(() => {
-        if (!hasNext) return;
-        setPage(_page + 1);
-    }, [hasNext, _page]);
-
-    const prevPage = useCallback(() => {
-        if (!hasPrev) return;
-        setPage(_page - 1);
-    }, [hasPrev, _page]);
+    const hasPrevPage = data ? page > 1 : false;
+    const hasNextPage = data ? page < data.pages : false;
 
     return {
-        data,
-        error,
         isLoading,
-        page: _page,
-        hasNext,
-        hasPrev,
+        error,
+        data,
+        hasPrevPage,
+        hasNextPage,
+    };
+};
+
+/**
+ * 无限加载番剧列表请求，保留所有已加载页数据
+ * @example
+ * const { isLoading, error, animes, hasNextPage, nextPage } = useInfiniteAnimes();
+ * const loadMore = () => {
+ *     if (hasNextPage) {
+ *         nextPage();
+ *     }
+ * };
+ */
+export const useInfiniteAnimes = () => {
+    const getKey = (currSize: number, prevPageData: AnimesResp) => {
+        if (prevPageData && prevPageData.data.length === 0) {
+            return null;
+        }
+        return `/animes?page=${currSize + 1}`;
+    };
+
+    const { isLoading, error, data, setSize } = useSWRInfinite<AnimesResp>(getKey);
+    const isLoadingFirstPage = !data && isLoading;
+
+    const latestData = data?.at(-1);
+    const hasNextPage = latestData?.page < latestData?.pages;
+    const nextPage = () => setSize((prev) => hasNextPage ? prev + 1 : prev);
+
+    const animes = data ? data.flatMap((pageData) => pageData.data) : [];
+
+    return {
+        isLoading,
+        isLoadingFirstPage,
+        error,
+        animes,
+        hasNextPage,
         nextPage,
-        prevPage,
     };
 };
 
+/**
+ * 获取番剧详情
+ * @example
+ * const { isLoading, error, data } = useAnime("202507", "NUKITASHI");
+ */
 export const useAnime = (season: string, title: string) => {
-    const $anime = useMemo(() => createAnimeStore(season, title), [season, title]);
-
-    const { data, error, loading } = useStore($anime);
-    const isLoading = loading || (!data && !error);
-
-    return {
-        data,
-        error,
-        isLoading,
-    };
+    return useSWR<Anime>(`/animes/${season}/${title}`);
 };
 
-export const useAnimeMutation = () => {
-    const $updateAnime = createAnimeMutatorStore();
-    return useStore($updateAnime);
+/**
+ * 更新番剧信息
+ * @example
+ * const { trigger, isMutating, error } = useAnimeMutation(202507, "NUKITASHI");
+ * trigger({
+ *   cover: "base64...",
+ * });
+ */
+export const useAnimeMutation = (season: string, title: string) => {
+    const updater = (key: string, { arg }: { arg: Partial<AnimeMutationBody> }) => request(key, {
+        method: "PUT",
+        body: {
+            title,
+            season,
+            ...arg,
+        },
+    });
+    return useSWRMutation(`/animes/${season}/${title}`, updater);
 };

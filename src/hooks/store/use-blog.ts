@@ -1,63 +1,91 @@
-import { createBlogMutatorStore, createBlogsStore, createBlogStore } from "@/stores/fethcer";
-import { useStore } from "@nanostores/preact";
-import { useCallback, useMemo, useState } from "preact/hooks";
+import { request } from "@/helpers/network";
+import useSWR from "swr";
+import useSWRInfinite from "swr/infinite";
+import useSWRMutation from "swr/mutation";
 
-type Props = {
-    page?: number;
-};
+/**
+ * 常规文章列表请求，只能获取一页数据
+ * @example
+ * const { isLoading, error, data, hasNextPage } = useBlogs({ page: 1 });
+ */
+export const useBlogs = (options?: BlogsParams) => {
+    const { page = 1 } = options ?? {};
+    const { isLoading, error, data } = useSWR<BlogsResp>(`/blogs?page=${page}`);
 
-export const useBlogs = (props?: Props) => {
-    const {
-        page = 1,
-    } = props ?? {};
-
-    const [_page, setPage] = useState(page);
-
-    const $blogs = useMemo(() => createBlogsStore({
-        page: _page,
-    }), [_page]);
-
-    const { data, error, loading } = useStore($blogs);
-    const isLoading = loading || (!data && !error);
-    const hasNext = _page < data?.pages;
-    const hasPrev = _page > 1;
-
-    const nextPage = useCallback(() => {
-        if (!hasNext) return;
-        setPage(_page + 1);
-    }, [hasNext, _page]);
-
-    const prevPage = useCallback(() => {
-        if (!hasPrev) return;
-        setPage(_page - 1);
-    }, [hasPrev, _page]);
+    const hasPrevPage = data ? page > 1 : false;
+    const hasNextPage = data ? page < data.pages : false;
 
     return {
-        data,
-        error,
         isLoading,
-        page: _page,
-        hasNext,
-        hasPrev,
+        error,
+        data,
+        hasPrevPage,
+        hasNextPage,
+    };
+};
+
+/**
+ * 无限加载文章列表请求，保留所有已加载页数据
+ * @example
+ * const { isLoading, error, blogs, hasNextPage, nextPage } = useInfiniteBlogs();
+ * const loadMore = () => {
+ *     if (hasNextPage) {
+ *         nextPage();
+ *     }
+ * };
+ */
+export const useInfiniteBlogs = () => {
+    const getKey = (currSize: number, prevPageData: BlogsResp) => {
+        if (prevPageData && prevPageData.data.length === 0) {
+            return null;
+        }
+        return `/blogs?page=${currSize + 1}`;
+    };
+
+    const { isLoading, error, data, setSize } = useSWRInfinite<BlogsResp>(getKey);
+    const isLoadingFirstPage = !data && isLoading;
+
+    const latestData = data?.at(-1);
+    const hasNextPage = latestData?.page < latestData?.pages;
+    const nextPage = () => setSize((prev) => hasNextPage ? prev + 1 : prev);
+
+    const blogs = data ? data.flatMap((pageData) => pageData.data) : [];
+
+    return {
+        isLoading,
+        isLoadingFirstPage,
+        error,
+        blogs,
+        hasNextPage,
         nextPage,
-        prevPage,
     };
 };
 
-export const useBlog = (year: number, id: string) => {
-    const $blog = useMemo(() => createBlogStore(year, id), [year, id]);
-
-    const { data, error, loading } = useStore($blog);
-    const isLoading = loading || (!data && !error);
-
-    return {
-        data,
-        error,
-        isLoading,
-    };
+/**
+ * 获取文章详情
+ * @example
+ * const { isLoading, error, data } = useBlog(2025, "年度总结2");
+ */
+export const useBlog = (year: number, title: string) => {
+    return useSWR<Blog>(`/blogs/${year}/${title}`);
 };
 
-export const useBlogMutation = () => {
-    const $updateBlog = createBlogMutatorStore();
-    return useStore($updateBlog);
+/**
+ * 更新文章信息
+ * @example
+ * const { trigger, isMutating, error } = useBlogMutation(2025, "年度总结2");
+ * trigger({
+ *   cover: "base64...",
+ * });
+ */
+export const useBlogMutation = (year: number, title: string) => {
+    const updater = (key: string, { arg }: { arg: Partial<BlogMutationBody> }) => request(key, {
+        method: "PUT",
+        body: {
+            title,
+            year,
+            ...arg,
+        },
+    });
+    return useSWRMutation(`/blogs/${year}/${title}`, updater);
 };

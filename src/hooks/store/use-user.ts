@@ -1,11 +1,10 @@
 import { random } from "@/helpers/number";
+import { nanoid } from "nanoid";
 import { createGlobalState } from "react-use";
 
-const randomID = random(1000, 9999);
-
 const useUser = createGlobalState({
-    id: randomID,
-    name: `无名客${randomID}`,
+    id: nanoid(),
+    name: `无名客${random(1000, 9999)}`,
 });
 
 export default useUser;

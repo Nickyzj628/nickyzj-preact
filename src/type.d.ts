@@ -58,7 +58,6 @@ type Blog = {
 
 type BlogsParams = {
     page?: number;
-    pageSize?: number;
 };
 
 type BlogsResp = RespWithpage & {
@@ -86,7 +85,6 @@ type Anime = {
 
 type AnimesParams = {
     page?: number;
-    pageSize?: number;
 };
 
 type AnimesResp = RespWithpage & {

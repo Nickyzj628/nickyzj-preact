@@ -1,3 +1,4 @@
+import { to } from "@/helpers/network";
 import { useAnimeMutation } from "@/hooks/store/use-anime";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
@@ -26,16 +27,16 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
         return `/default.webp`;
     }, [title, cover]);
 
-    const { mutate, loading } = useAnimeMutation();
+    const { trigger, isMutating } = useAnimeMutation(season, title);
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        try {
-            await mutate({ title, season, cover });
-            toast.success("修改成功！");
-            onClose();
-        } catch (err) {
-            toast.error(`更新番剧失败：${err.message}`);
+        const [error, response] = await to(trigger({ cover }));
+        if (error) {
+            toast.error(`更新失败：${error.message}`);
+            return;
         }
+        toast.success("修改成功！");
+        onClose();
     };
 
     return (
@@ -72,7 +73,7 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
                 </div>
                 <button
                     type="submit"
-                    disabled={loading}
+                    disabled={isMutating}
                     className="justify-center w-full"
                 >
                     提交
