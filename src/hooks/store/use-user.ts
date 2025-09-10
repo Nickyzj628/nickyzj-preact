@@ -1,8 +1,8 @@
+import createPersistedGlobalState from "@/etc/create-persisted-global-state";
 import { random } from "@/helpers/number";
 import { nanoid } from "nanoid";
-import { createGlobalState } from "react-use";
 
-const useUser = createGlobalState({
+const useUser = createPersistedGlobalState("user", {
     id: nanoid(),
     name: `无名客${random(1000, 9999)}`,
 });

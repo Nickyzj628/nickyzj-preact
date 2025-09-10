@@ -1,4 +1,4 @@
-import { useSocket } from "@/contexts/socket";
+import { useSocket } from "@/etc/socket-context";
 import { clsx, qs } from "@/helpers/string";
 import { useMemo } from "preact/hooks";
 import { Link, useLocation, useSearchParams } from "wouter-preact";

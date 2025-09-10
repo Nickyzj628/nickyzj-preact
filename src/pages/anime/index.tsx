@@ -1,6 +1,6 @@
 import Loading from "@/components/loading";
 import Tabs from "@/components/tabs";
-import { SocketProvider } from "@/contexts/socket";
+import { SocketProvider } from "@/etc/socket-context";
 import { setTitle } from "@/helpers/dom";
 import { useAnime } from "@/hooks/store/use-anime";
 import Episodes from "@/pages/anime/episodes";

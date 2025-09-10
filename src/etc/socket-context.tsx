@@ -4,7 +4,7 @@ import { ReactNode } from "preact/compat";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { io, ManagerOptions, Socket, SocketOptions } from "socket.io-client";
 
-export const SocketContext = createContext<Socket | null>(null);
+const SocketContext = createContext<Socket | null>(null);
 
 /**
  * 通用的 Socket.IO Context Provider

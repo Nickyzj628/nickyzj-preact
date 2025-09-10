@@ -1,4 +1,4 @@
-import { useSocket } from "@/contexts/socket";
+import { useSocket } from "@/etc/socket-context";
 import { getAnimeVideoByEp, to } from "@/helpers/network";
 import { throttle } from "@/helpers/time";
 import Danmaku from "danmaku/dist/esm/danmaku.dom.js";

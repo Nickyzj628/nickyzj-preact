@@ -1,4 +1,4 @@
-import { useSocket } from "@/contexts/socket";
+import { useSocket } from "@/etc/socket-context";
 import { copyToClipboard } from "@/helpers/dom";
 import useUser from "@/hooks/store/use-user";
 import { FormEvent } from "preact/compat";
