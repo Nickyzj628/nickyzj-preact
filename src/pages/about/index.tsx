@@ -1,8 +1,8 @@
-import History from "@/components/about/history";
-import Links from "@/components/about/links";
-import Works from "@/components/about/works";
 import Avatar from "@/components/avatar";
 import Tabs from "@/components/tabs";
+import History from "./history";
+import Links from "./links";
+import Works from "./works";
 
 const Page = () => {
     return (

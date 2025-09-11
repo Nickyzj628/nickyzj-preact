@@ -1,4 +1,4 @@
-import { BACKEND_PORT, BASE_URL } from "@/helpers/constant";
+import { BACKEND_PORT, BASE_URL } from "@/etc/constants";
 import { createContext } from "preact";
 import { ReactNode } from "preact/compat";
 import { useContext, useEffect, useState } from "preact/hooks";

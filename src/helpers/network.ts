@@ -1,4 +1,4 @@
-import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/helpers/constant";
+import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/etc/constants";
 
 /**
  * 向 Amadeus 后端发送请求

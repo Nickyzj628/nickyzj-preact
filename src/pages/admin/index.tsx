@@ -1,6 +1,6 @@
-import Animes from "@/components/admin/animes";
-import Blogs from "@/components/admin/blogs";
 import Tabs from "@/components/tabs";
+import Animes from "./animes";
+import Blogs from "./blogs";
 
 enum Tab {
     Blogs,
@@ -21,10 +21,10 @@ const Page = () => {
                     番剧
                 </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value={Tab.Blogs} keepAlive={false}>
+            <Tabs.Content value={Tab.Blogs}>
                 <Blogs />
             </Tabs.Content>
-            <Tabs.Content value={Tab.Animes} keepAlive={false}>
+            <Tabs.Content value={Tab.Animes}>
                 <Animes />
             </Tabs.Content>
         </Tabs>

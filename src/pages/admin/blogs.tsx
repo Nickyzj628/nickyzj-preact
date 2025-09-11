@@ -1,7 +1,7 @@
+import Loading from "@/components/loading";
 import { useBlogs } from "@/hooks/store/use-blog";
 import { useState } from "preact/hooks";
 import { useCounter } from "react-use";
-import Loading from "../loading";
 import BlogEditDrawer from "./blog-edit-drawer";
 
 const Blogs = () => {

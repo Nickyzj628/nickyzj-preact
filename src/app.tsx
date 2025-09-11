@@ -1,4 +1,4 @@
-import { routes, ROUTES_VISIBLE_AT_NAVBAR } from "@/helpers/routes";
+import { routes, ROUTES_VISIBLE_AT_NAVBAR } from "@/etc/routes";
 import { clsx } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
 import { useIsMobile } from "@/hooks/device";

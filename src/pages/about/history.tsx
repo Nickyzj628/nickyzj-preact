@@ -1,6 +1,6 @@
 import { useEnsuredRef, useZoom } from "@/hooks/dom";
-import Image from "../image";
-import Timeline from "../timeline";
+import Image from "../../components/image";
+import Timeline from "../../components/timeline";
 
 const History = () => {
     const history = [

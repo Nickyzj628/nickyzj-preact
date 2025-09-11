@@ -1,20 +1,20 @@
+import Drawer from "@/components/drawer";
+import ImageUploader from "@/components/image-uploader";
+import Input from "@/components/input";
 import { to } from "@/helpers/network";
-import { useAnimeMutation } from "@/hooks/store/use-anime";
+import { useBlogMutation } from "@/hooks/store/use-blog";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
 import { toast } from "react-hot-toast";
-import Drawer from "../drawer";
-import ImageUploader from "../image-uploader";
-import Input from "../input";
 
 type Props = {
-    data: Anime;
+    data: Blog;
     isOpen: boolean;
     onClose: () => void;
 };
 
-const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
-    const { title, season, updated } = data ?? {};
+const BlogEditDrawer = ({ data, isOpen, onClose }: Props) => {
+    const { title, year, updated } = data ?? {};
 
     const [cover, setCover] = useState<string>();
     const coverSrc = useMemo(() => {
@@ -22,17 +22,17 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
             return cover;
         }
         if (title) {
-            return `/Animes/${title}.webp`;
+            return `/Blogs/${title}.webp`;
         }
         return `/default.webp`;
     }, [title, cover]);
 
-    const { trigger, isMutating } = useAnimeMutation(season, title);
+    const { trigger, isMutating } = useBlogMutation(year, title);
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const [error, response] = await to(trigger({ cover }));
         if (error) {
-            toast.error(`更新失败：${error.message}`);
+            toast.error(`修改失败：${error.message}`);
             return;
         }
         toast.success("修改成功！");
@@ -62,8 +62,8 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
                     />
                     <Input
                         disabled
-                        label="季度"
-                        value={season}
+                        label="创建年份"
+                        value={year}
                     />
                     <Input
                         disabled
@@ -83,4 +83,4 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
     );
 };
 
-export default AnimeEditDrawer;
+export default BlogEditDrawer;

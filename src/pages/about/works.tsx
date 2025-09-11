@@ -1,5 +1,6 @@
-import { Figcaption, Figure } from "../figure";
-import Timeline from "../timeline";
+import { BASE_URL } from "@/etc/constants";
+import { Figcaption, Figure } from "../../components/figure";
+import Timeline from "../../components/timeline";
 
 const Works = () => {
     const groupedWorks = Object.entries(
@@ -31,21 +32,21 @@ const Works = () => {
                     title: "暑假实习",
                     description: "Photoshop + ThinkPHP",
                     image: "/About/Works/ygd.webp",
-                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/ygd_raw.webp",
+                    href: `${BASE_URL}:2020/Nickyzj/Photos/About/Works/ygd_raw.webp`,
                 },
                 {
                     time: "2019年",
                     title: "星光计划",
                     description: "Photoshop + Wordpress + MySQL",
                     image: "/About/Works/xgjh.webp",
-                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/xgjh_raw.webp",
+                    href: `${BASE_URL}:2020/Nickyzj/Photos/About/Works/xgjh_raw.webp`,
                 },
                 {
                     time: "2018年",
                     title: "世界技能大赛",
                     description: "Photoshop + Wordpress + MySQL",
                     image: "/About/Works/sjjnds.webp",
-                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/sjjnds_raw.webp",
+                    href: `${BASE_URL}:2020/Nickyzj/Photos/About/Works/sjjnds_raw.webp`,
                 }
             ],
             (work) => work.time

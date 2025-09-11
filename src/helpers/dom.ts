@@ -60,20 +60,6 @@ export const getChildrenByTag = <K extends keyof HTMLElementTagNameMap>(
     return elements;
 };
 
-const copyToClipboardFallback = (text: string) => {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed"; // 防止页面滚动
-
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    const done = document.execCommand("copy");
-    toast.success(done ? "复制到剪贴板成功" : "复制但剪贴板失败，请手动复制");
-    document.body.removeChild(textarea);
-};
-
 /**
  * 复制文本到剪贴板
  * @param text 要复制的文本
@@ -81,15 +67,25 @@ const copyToClipboardFallback = (text: string) => {
  * copyToClipboard("Hello, world!"); // 复制 "Hello, world!" 到剪贴板
  */
 export const copyToClipboard = async (text: string) => {
+    // 如果浏览器不支持 Clipboard API，则使用旧方法
     if (!navigator.clipboard) {
-        copyToClipboardFallback(text);
-        return;
-    }
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed"; // 防止页面滚动
 
-    const [err] = await to(navigator.clipboard.writeText(text));
-    if (err) {
-        toast.error(`复制到剪贴板失败：${err.message}`);
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        const done = document.execCommand("copy");
+        toast.success(done ? "复制到剪贴板成功" : "复制到剪贴板失败，请手动复制");
+        document.body.removeChild(textarea);
     } else {
-        toast.success("复制到剪贴板成功");
+        const [error] = await to(navigator.clipboard.writeText(text));
+        if (error) {
+            toast.error(`复制到剪贴板失败：${error.message}`);
+        } else {
+            toast.success("复制到剪贴板成功");
+        }
     }
 };

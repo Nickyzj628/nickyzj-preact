@@ -1,7 +1,7 @@
+import Loading from "@/components/loading";
 import { useAnimes } from "@/hooks/store/use-anime";
 import { useState } from "preact/hooks";
 import { useCounter } from "react-use";
-import Loading from "../loading";
 import AnimeEditDrawer from "./anime-edit-drawer";
 
 const Animes = () => {
