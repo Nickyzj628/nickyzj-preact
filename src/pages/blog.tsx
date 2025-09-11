@@ -4,7 +4,7 @@ import Toggle from "@/components/toggle";
 import { setTitle } from "@/helpers/dom";
 import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
-import { useZoom } from "@/hooks/observer";
+import { useEnsuredRef, useZoom } from "@/hooks/dom";
 import { useBlog } from "@/hooks/store/use-blog";
 import NotFound from "@/pages/not-found";
 import { useEffect, useMemo, useState } from "preact/hooks";
@@ -74,7 +74,8 @@ const Page = () => {
     }, [isLoading, hash]);
 
     // 图片缩放
-    const [articleRef] = useZoom();
+    const [initArticleRef, articleRef] = useEnsuredRef();
+    useZoom(articleRef);
 
     if (isLoading) return (
         <div className="absolute inset-0 m-auto flex flex-col items-center gap-1 size-fit text-neutral-400 transition dark:text-neutral-500">
@@ -111,7 +112,7 @@ const Page = () => {
 
             {/* article */}
             <article
-                ref={articleRef}
+                ref={initArticleRef}
                 className="relative prose prose-neutral prose-img:inline prose-img:max-h-96 prose-img:mr-3 prose-img:mt-0 prose-img:mb-3 prose-img:shadow prose-img:rounded-xl prose-pre:rounded-xl p-5 mx-auto rounded-xl shadow-xl bg-white overflow-x-hidden transition dark:prose-invert prose-blockquote:dark:border-s-neutral-500 prose-pre:dark:bg-neutral-900 dark:bg-neutral-800"
                 dangerouslySetInnerHTML={{ __html: data.content ?? "" }}
             />

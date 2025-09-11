@@ -1,10 +1,9 @@
-import { useZoom } from "@/hooks/observer";
-import { useMemo } from "preact/hooks";
+import { useEnsuredRef, useZoom } from "@/hooks/dom";
 import Image from "../image";
 import Timeline from "../timeline";
 
 const History = () => {
-    const history = useMemo(() => [
+    const history = [
         {
             time: "2024年",
             title: "Preact + Tailwind CSS",
@@ -41,13 +40,14 @@ const History = () => {
             description: "参考了iPad Pro 2019官网的横向页面设计，第一版个人网站横空出世！",
             images: ["/About/History/2019.webp"],
         },
-    ], []);
+    ];
 
     // 图片缩放
-    const [containerRef] = useZoom();
+    const [initContainerRef, containerRef] = useEnsuredRef();
+    useZoom(containerRef);
 
     return (
-        <div ref={containerRef}>
+        <div ref={initContainerRef}>
             {history.map((item) => (
                 <Timeline
                     key={item.time}

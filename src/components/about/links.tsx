@@ -1,10 +1,9 @@
-import { useScrollX } from "@/hooks/scroll";
 import { useMemo } from "preact/hooks";
 import { Figcaption, Figure } from "../figure";
 import Section from "../section";
 
 const Links = () => {
-    const links = useMemo(() => [
+    const links = [
         {
             title: "哔哩哔哩",
             description: "大概每年发一到两部视频的样子",
@@ -48,9 +47,9 @@ const Links = () => {
             image: "/About/Links/github.webp",
             href: "https://github.com/Nickyzj628",
         }
-    ], []);
+    ];
 
-    const friends = useMemo(() => [
+    const friends = [
         {
             title: "铅笔",
             description: "这是一个圆披萨，简称……",
@@ -76,16 +75,13 @@ const Links = () => {
             image: "/About/Links/yzc.webp",
             href: "https://300report.jumpw.com/#/MyScore?r=537564775&m=0",
         },
-    ], []);
-
-    const [linksRef] = useScrollX();
-    const [friendsRef] = useScrollX();
+    ];
 
     return (
         <div className="flex flex-col gap-5">
             <Section>
                 <Section.Title className="text-blue-300">我的战绩</Section.Title>
-                <div ref={linksRef} className="mt-1.5 flex flex-wrap gap-3">
+                <div className="mt-1.5 flex flex-wrap gap-3">
                     {links.map((link, i) => (
                         <a key={i} href={link.href} target="_blank">
                             <Figure className="aspect-square w-32 sm:w-36">
@@ -114,7 +110,7 @@ const Links = () => {
             </Section>
             <Section>
                 <Section.Title className="text-red-300">热血战友</Section.Title>
-                <div ref={friendsRef} className="mt-1.5 flex flex-wrap gap-3">
+                <div className="mt-1.5 flex flex-wrap gap-3">
                     {friends.map((friend, i) => (
                         <a key={i} href={friend.href} target="_blank">
                             <Figure className="aspect-square w-32 sm:w-36">

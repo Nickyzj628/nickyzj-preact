@@ -1,9 +1,8 @@
-import { useMemo } from "preact/hooks";
 import { Figcaption, Figure } from "../figure";
 import Timeline from "../timeline";
 
 const Works = () => {
-    const groupedWorks = useMemo(() => Object.entries(
+    const groupedWorks = Object.entries(
         Object.groupBy(
             [
                 {
@@ -32,26 +31,26 @@ const Works = () => {
                     title: "暑假实习",
                     description: "Photoshop + ThinkPHP",
                     image: "/About/Works/ygd.webp",
-                    href: "http://nickyzj.ddns.net:2020/Nickyzj/Photos/About/Works/ygd_raw.webp",
+                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/ygd_raw.webp",
                 },
                 {
                     time: "2019年",
                     title: "星光计划",
                     description: "Photoshop + Wordpress + MySQL",
                     image: "/About/Works/xgjh.webp",
-                    href: "http://nickyzj.ddns.net:2020/Nickyzj/Photos/About/Works/xgjh_raw.webp",
+                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/xgjh_raw.webp",
                 },
                 {
                     time: "2018年",
                     title: "世界技能大赛",
                     description: "Photoshop + Wordpress + MySQL",
                     image: "/About/Works/sjjnds.webp",
-                    href: "http://nickyzj.ddns.net:2020/Nickyzj/Photos/About/Works/sjjnds_raw.webp",
+                    href: "http://nickyzj.run:2020/Nickyzj/Photos/About/Works/sjjnds_raw.webp",
                 }
             ],
             (work) => work.time
         )
-    ), []);
+    );
 
     return <>
         {groupedWorks.map(([year, works]) => (
