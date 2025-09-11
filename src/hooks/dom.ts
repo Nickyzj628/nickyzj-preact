@@ -5,7 +5,7 @@ import { MutableRef, useCallback, useEffect, useState } from "preact/hooks";
  * 更可靠的 DOM 引用保存方式，可以避免提前返回导致 ref.current 容易读到 null 的问题
  * @example
  * const [initRef, ref] = useEnsuredRef<HTMLDivElement>();
- * const {isLoading, data} = useSWR("/some-api");
+ * const {isLoading, data} = useRequest("/some-api");
  * useEffect(() => {
  *     // 先打印 null，再打印 div 元素
  *     console.log(ref.current);

@@ -1,7 +1,6 @@
 import { request } from "@/helpers/network";
-import useSWR from "swr";
-import useSWRInfinite from "swr/infinite";
-import useSWRMutation from "swr/mutation";
+import { useAsyncFn, useCounter } from "react-use";
+import { useInfiniteRequest, useRequest } from "../network";
 
 /**
  * 常规番剧列表请求，只能获取一页数据
@@ -10,7 +9,7 @@ import useSWRMutation from "swr/mutation";
  */
 export const useAnimes = (options?: AnimesParams) => {
     const { page = 1 } = options ?? {};
-    const { isLoading, error, data } = useSWR<AnimesResp>(`/animes?page=${page}`);
+    const { isLoading, error, data } = useRequest<AnimesResp>(`/animes?page=${page}`);
 
     const hasPrevPage = data ? page > 1 : false;
     const hasNextPage = data ? page < data.pages : false;
@@ -35,19 +34,12 @@ export const useAnimes = (options?: AnimesParams) => {
  * };
  */
 export const useInfiniteAnimes = () => {
-    const getKey = (currSize: number, prevPageData: AnimesResp) => {
-        if (prevPageData && prevPageData.data.length === 0) {
-            return null;
-        }
-        return `/animes?page=${currSize + 1}`;
-    };
-
-    const { isLoading, error, data, setSize } = useSWRInfinite<AnimesResp>(getKey);
+    const [page, { inc: nextPage }] = useCounter(1);
+    const { isLoading, error, data } = useInfiniteRequest<AnimesResp>(`/animes?page=${page}`);
     const isLoadingFirstPage = !data && isLoading;
 
     const latestData = data?.at(-1);
     const hasNextPage = latestData?.page < latestData?.pages;
-    const nextPage = () => setSize((prev) => hasNextPage ? prev + 1 : prev);
 
     const animes = data ? data.flatMap((pageData) => pageData.data) : [];
 
@@ -67,7 +59,7 @@ export const useInfiniteAnimes = () => {
  * const { isLoading, error, data } = useAnime("202507", "NUKITASHI");
  */
 export const useAnime = (season: string, title: string) => {
-    return useSWR<Anime>(`/animes/${season}/${title}`);
+    return useRequest<Anime>(`/animes/${season}/${title}`);
 };
 
 /**
@@ -79,13 +71,20 @@ export const useAnime = (season: string, title: string) => {
  * });
  */
 export const useAnimeMutation = (season: string, title: string) => {
-    const updater = (key: string, { arg }: { arg: Partial<AnimeMutationBody> }) => request(key, {
-        method: "PUT",
-        body: {
-            title,
-            season,
-            ...arg,
-        },
-    });
-    return useSWRMutation(`/animes/${season}/${title}`, updater);
+    const [{ loading, error }, trigger] = useAsyncFn((data: Partial<AnimeMutationBody>) => {
+        return request(`/blogs/${season}/${title}`, {
+            method: "PUT",
+            body: {
+                title,
+                season,
+                ...data,
+            }
+        });
+    }, [season, title]);
+
+    return {
+        trigger,
+        isMutating: loading,
+        error,
+    };
 };

@@ -1,5 +1,7 @@
 import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/etc/constants";
 
+const cachedRequests = new Map<string, Promise<Response>>();
+
 /**
  * 向 Amadeus 后端发送请求
  * @param path 接口路由，以“/”开头
@@ -23,7 +25,21 @@ export const request = async <T>(path: string, options: Recordable = {}) => {
         }
     }
 
-    const response = await fetch(`${BASE_URL}:${BACKEND_PORT}${path}`, options);
+    const fetcher = () => fetch(`${BASE_URL}:${BACKEND_PORT}${path}`, options);
+    let promise: Promise<Response>;
+
+    const canCache = !options.method || options.method === "GET";
+    if (canCache) {
+        if (!cachedRequests.has(path)) {
+            cachedRequests.set(path, fetcher());
+        }
+        promise = cachedRequests.get(path);
+    } else {
+        promise = fetcher();
+    }
+
+    // 必须使用 clone() 消费一个新的响应体，否则下次从 cache 中获取的响应体会报错（无法被重复消费）
+    const response = (await promise).clone();
     if (!response.ok) {
         throw new Error(response.statusText);
     }

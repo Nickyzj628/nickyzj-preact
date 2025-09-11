@@ -10,12 +10,10 @@ import { render } from "preact";
 import { Suspense } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
 import { toast, Toaster } from "react-hot-toast";
-import { SWRConfig } from "swr";
 import { Link, Route, Switch } from "wouter-preact";
 import Avatar from "./components/avatar";
 import Loading from "./components/loading";
 import Toggle from "./components/toggle";
-import { request } from "./helpers/network";
 
 dayjs.locale("zh-cn");
 dayjs.extend(relativeTime);
@@ -236,37 +234,28 @@ const Footer = () => {
 };
 
 const App = () => {
-    return (
-        <SWRConfig value={{
-            fetcher: request,
-            revalidateIfStale: false,
-            revalidateOnFocus: false,
-            revalidateOnReconnect: false,
-            shouldRetryOnError: false,
-            keepPreviousData: true,
-        }}>
-            <div className="flex flex-col gap-3 min-h-screen p-3">
-                <Header />
-                <div className="flex flex-1 gap-3">
-                    <Aside />
-                    <main className="bento relative flex flex-1 flex-wrap items-start content-start gap-3 overflow-hidden">
-                        <Suspense fallback={<Loading className="size-full" />}>
-                            <Router />
-                        </Suspense>
-                    </main>
-                </div>
-                <Footer />
+    return <>
+        <div className="flex flex-col gap-3 min-h-screen p-3">
+            <Header />
+            <div className="flex flex-1 gap-3">
+                <Aside />
+                <main className="bento relative flex flex-1 flex-wrap items-start content-start gap-3 overflow-hidden">
+                    <Suspense fallback={<Loading className="size-full" />}>
+                        <Router />
+                    </Suspense>
+                </main>
             </div>
-            <Toaster
-                position="bottom-right"
-                toastOptions={{
-                    style: {
-                        wordBreak: "break-word",
-                    },
-                }}
-            />
-        </SWRConfig>
-    );
+            <Footer />
+        </div>
+        <Toaster
+            position="bottom-right"
+            toastOptions={{
+                style: {
+                    wordBreak: "break-word",
+                },
+            }}
+        />
+    </>;
 };
 
 render(<App />, document.body);

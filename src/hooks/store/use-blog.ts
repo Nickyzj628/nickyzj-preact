@@ -1,7 +1,6 @@
 import { request } from "@/helpers/network";
-import useSWR from "swr";
-import useSWRInfinite from "swr/infinite";
-import useSWRMutation from "swr/mutation";
+import { useAsyncFn, useCounter } from "react-use";
+import { useInfiniteRequest, useRequest } from "../network";
 
 /**
  * 常规文章列表请求，只能获取一页数据
@@ -10,7 +9,7 @@ import useSWRMutation from "swr/mutation";
  */
 export const useBlogs = (options?: BlogsParams) => {
     const { page = 1 } = options ?? {};
-    const { isLoading, error, data } = useSWR<BlogsResp>(`/blogs?page=${page}`);
+    const { isLoading, error, data } = useRequest<BlogsResp>(`/blogs?page=${page}`);
 
     const hasPrevPage = data ? page > 1 : false;
     const hasNextPage = data ? page < data.pages : false;
@@ -35,19 +34,12 @@ export const useBlogs = (options?: BlogsParams) => {
  * };
  */
 export const useInfiniteBlogs = () => {
-    const getKey = (currSize: number, prevPageData: BlogsResp) => {
-        if (prevPageData && prevPageData.data.length === 0) {
-            return null;
-        }
-        return `/blogs?page=${currSize + 1}`;
-    };
-
-    const { isLoading, error, data, setSize } = useSWRInfinite<BlogsResp>(getKey);
+    const [page, { inc: nextPage }] = useCounter(1);
+    const { isLoading, error, data } = useInfiniteRequest<BlogsResp>(`/blogs?page=${page}`);
     const isLoadingFirstPage = !data && isLoading;
 
     const latestData = data?.at(-1);
     const hasNextPage = latestData?.page < latestData?.pages;
-    const nextPage = () => setSize((prev) => hasNextPage ? prev + 1 : prev);
 
     const blogs = data ? data.flatMap((pageData) => pageData.data) : [];
 
@@ -67,7 +59,7 @@ export const useInfiniteBlogs = () => {
  * const { isLoading, error, data } = useBlog(2025, "年度总结2");
  */
 export const useBlog = (year: number, title: string) => {
-    return useSWR<Blog>(`/blogs/${year}/${title}`);
+    return useRequest<Blog>(`/blogs/${year}/${title}`);
 };
 
 /**
@@ -79,13 +71,20 @@ export const useBlog = (year: number, title: string) => {
  * });
  */
 export const useBlogMutation = (year: number, title: string) => {
-    const updater = (key: string, { arg }: { arg: Partial<BlogMutationBody> }) => request(key, {
-        method: "PUT",
-        body: {
-            title,
-            year,
-            ...arg,
-        },
-    });
-    return useSWRMutation(`/blogs/${year}/${title}`, updater);
+    const [{ loading, error }, trigger] = useAsyncFn((data: Partial<BlogMutationBody>) => {
+        return request(`/blogs/${year}/${title}`, {
+            method: "PUT",
+            body: {
+                title,
+                year,
+                ...data,
+            }
+        });
+    }, [year, title]);
+
+    return {
+        trigger,
+        isMutating: loading,
+        error,
+    };
 };

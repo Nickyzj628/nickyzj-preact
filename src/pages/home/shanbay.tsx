@@ -2,10 +2,10 @@ import { Figcaption, Figure } from "@/components/figure";
 import Loading from "@/components/loading";
 import Section from "@/components/section";
 import { clsx } from "@/helpers/string";
-import useSWR from "swr";
+import { useRequest } from "@/hooks/network";
 
 const Shanbay = () => {
-    const { isLoading, error, data } = useSWR("/shanbay");
+    const { isLoading, error, data } = useRequest<ShanbayResp>("/shanbay");
 
     return (
         <Section className={"aspect-[2/3] w-full sm:w-80 lg:w-96 mt-2"}>
