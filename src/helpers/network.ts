@@ -1,6 +1,7 @@
 import { BACKEND_PORT, BASE_URL, WEBDAV_PORT } from "@/etc/constants";
+import LRUCache from "@/etc/lru-cache";
 
-const cachedRequests = new Map<string, Promise<Response>>();
+const cachedRequests = new LRUCache<string, Promise<Response>>();
 
 /**
  * 向 Amadeus 后端发送请求
