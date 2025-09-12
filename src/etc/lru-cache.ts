@@ -1,7 +1,7 @@
 /**
  * 简易 LRU 缓存
  * @example
- * const cache = new LRUCache<string, number>(2);    // 默认 10
+ * const cache = new LRUCache<string, number>(2);
  * cache.set("a", 1);
  * cache.set("b", 2);
  * cache.set("c", 3);    // 缓存已满，a 被淘汰

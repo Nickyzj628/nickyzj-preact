@@ -1,3 +1,4 @@
+import "@/assets/tailwind.css";
 import { routes, ROUTES_VISIBLE_AT_NAVBAR } from "@/etc/routes";
 import { clsx } from "@/helpers/string";
 import { throttle } from "@/helpers/time";
