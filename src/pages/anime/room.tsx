@@ -9,7 +9,7 @@ import Badge, { BadgeType } from "../../components/badge";
 
 const getBadgeInfo = (message: RoomMessage) => {
     const result = {
-        type: "invert" as BadgeType,
+        type: "default" as BadgeType,
         role: "观众",
     };
 

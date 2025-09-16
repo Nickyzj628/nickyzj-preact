@@ -53,7 +53,7 @@ const Page = () => {
     return (
         <SocketProvider config={{ path: "/rooms" }}>
             <Video anime={data} isHost={isHost} />
-            <Tabs defaultValue={Tab.Room} className="w-full xl:w-64 max-h-96 overflow-hidden">
+            <Tabs defaultValue={Tab.Episodes} className="w-full xl:w-64 max-h-96 overflow-hidden">
                 <Tabs.List>
                     <Tabs.Trigger value={Tab.Episodes}>
                         选集
