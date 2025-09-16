@@ -15,6 +15,11 @@ export default defineConfig({
             "@": "./src",
         },
     },
+    tools: {
+        postcss: (opts, { addPlugins }) => {
+            addPlugins([require("@tailwindcss/postcss")]);
+        },
+    },
     plugins: [pluginPreact()],
     performance: {
         chunkSplit: {
