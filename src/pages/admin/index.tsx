@@ -2,10 +2,10 @@ import Tabs from "@/components/tabs";
 import Animes from "./animes";
 import Blogs from "./blogs";
 
-enum Tab {
-    Blogs,
-    Animes,
-};
+const Tab = {
+    Blogs: 1,
+    Animes: 2,
+} as const;
 
 const Page = () => {
     return (

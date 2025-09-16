@@ -11,12 +11,14 @@ type Props = {
     onClose: () => void;
 };
 
-enum LifeCycle {
-    BeforeOpen,
-    Opened,
-    BeforeClose,
-    Closed,
-};
+const LifeCycle = {
+    BeforeOpen: 0,
+    Opened: 1,
+    BeforeClose: 2,
+    Closed: 3,
+} as const;
+
+type LifeCycle = (typeof LifeCycle)[keyof typeof LifeCycle];
 
 const Drawer = ({
     isOpen = false,
@@ -24,7 +26,7 @@ const Drawer = ({
     children,
     onClose,
 }: Props) => {
-    const [lifeCycle, setLifeCycle] = useState(LifeCycle.Closed);
+    const [lifeCycle, setLifeCycle] = useState<LifeCycle>(LifeCycle.Closed);
 
     const onOpen = async () => {
         setLifeCycle(LifeCycle.BeforeOpen);

@@ -10,11 +10,11 @@ import NotFound from "@/pages/not-found";
 import { useEffect, useState } from "preact/hooks";
 import { useParams } from "wouter-preact";
 
-enum Tab {
-    Episodes,
-    Room,
-    Comments,
-};
+const Tab = {
+    Episodes: 1,
+    Room: 2,
+    Comments: 3,
+} as const;
 
 type Params = {
     season: string;
@@ -53,7 +53,7 @@ const Page = () => {
     return (
         <SocketProvider config={{ path: "/rooms" }}>
             <Video anime={data} isHost={isHost} />
-            <Tabs defaultValue={Tab.Episodes} className="w-full xl:w-64 max-h-96 overflow-hidden">
+            <Tabs defaultValue={Tab.Room} className="w-full xl:w-64 max-h-96 overflow-hidden">
                 <Tabs.List>
                     <Tabs.Trigger value={Tab.Episodes}>
                         选集

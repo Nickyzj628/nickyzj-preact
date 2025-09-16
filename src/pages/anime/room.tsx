@@ -31,7 +31,8 @@ const Room = ({
     const [searchParams, setSearchParams] = useSearchParams();
     const roomId = searchParams.get("roomId");
 
-    const [{ name: userName }] = useUser();
+    const [user] = useUser();
+    const userName = user.name;
 
     const socket = useSocket();
     const socketId = socket?.id;
