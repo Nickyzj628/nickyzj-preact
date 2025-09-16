@@ -88,7 +88,7 @@ const Pages = () => {
     }, [isLoadingPage, hasNextPage, intersection]);
 
     return (
-        <div className="relative grid flex-1 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
+        <div className="relative grid flex-1 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-9 gap-3">
             {Array.from({ length: page }).map((_, i) => (
                 <Page
                     key={i}
