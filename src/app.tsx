@@ -126,7 +126,7 @@ const Header = () => {
                 <div className="divider" />
                 <button className="gap-1.5 p-0 bg-transparent hover:bg-transparent" onClick={onClickUser}>
                     {!isMobile && user.name}
-                    <Avatar />
+                    <Avatar size="xl" />
                 </button>
             </div>
         </header>

@@ -9,52 +9,85 @@ const typeMap = {
     danger: "bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300",
     invert: "bg-black text-white dark:bg-white dark:text-black",
 };
-
-export type BadgeType = keyof typeof typeMap;
+type Type = keyof typeof typeMap;
+export type BadgeType = Type;
 
 const sizeMap = {
-    small: {
+    sm: {
         wrapper: "px-2 py-1 text-xs",
         icon: "w-3 h-3",
     },
-    middle: {
+    md: {
         wrapper: "px-3 py-1 text-sm",
         icon: "w-4 h-4",
     },
 };
+type Size = keyof typeof sizeMap;
+export type BadgeSize = Size;
 
-export type BadgeSize = keyof typeof sizeMap;
-
-const Badge = ({
-    type = "default",
-    size = "small",
-    className,
-    icon,
-    showClose = false,
-    onClose = () => void 0,
-    children,
-}: {
-    type?: BadgeType,
-    size?: BadgeSize,
+type Props = {
+    type?: Type,
+    size?: Size,
+    rounded?: boolean;
     className?: string,
     /**
-     * 请传入 \@iconify/tailwind4 插件支持的类名
+     * 请传入 @iconify/tailwind4 插件支持的类名
      * @example "icon-[mingcute--align-arrow-left-line]"
      */
     icon?: string;
+    children?: ReactNode,
     showClose?: boolean;
     onClose?: () => void;
-    children?: ReactNode,
-}) => {
+};
+export type BadgeProps = Props;
+
+/**
+ * 徽标，功能和样式参考了 Sailboat UI
+ * @see https://sailboatui.com/docs/components/badge/
+ * @example
+ * <Badge 
+ *     type="info"
+ *     size="middle"
+ *     rounded
+ *     className="mr-1"
+ *     icon="icon-[mingcute--align-arrow-left-line]"
+ *     showClose
+ *     onClose={() => console.log("点击了右侧关闭按钮")}
+ * >
+ *     帅Pi 26
+ * </Badge>
+ */
+const Badge = ({
+    type = "default",
+    size = "sm",
+    rounded = false,
+    className,
+    icon,
+    children,
+    showClose = false,
+    onClose = () => void 0,
+}: Props) => {
     return (
-        <span className={clsx("inline-flex items-center gap-1 rounded-lg font-semibold transition", typeMap[type], sizeMap[size]["wrapper"], className)}>
+        <span className={clsx(
+            "inline-flex items-center gap-1 font-semibold transition",
+            rounded ? "rounded-full" : "rounded-lg",
+            typeMap[type],
+            sizeMap[size]["wrapper"],
+            className,
+        )}>
             {icon && (
-                <span className={clsx(icon, sizeMap[size]["icon"])} />
+                <span className={clsx(
+                    icon,
+                    sizeMap[size]["icon"],
+                )} />
             )}
             {children}
             {showClose && (
                 <span
-                    className={clsx("icon-[mingcute--close-line] opacity-80 cursor-pointer hover:opacity-100", sizeMap[size]["icon"])}
+                    className={clsx(
+                        "icon-[mingcute--close-line] opacity-80 cursor-pointer hover:opacity-100",
+                        sizeMap[size]["icon"],
+                    )}
                     onClick={onClose}
                 />
             )}

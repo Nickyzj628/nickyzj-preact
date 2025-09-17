@@ -8,7 +8,7 @@ const Page = () => {
     return (
         <>
             <div className="flex items-center gap-3 w-full">
-                <Avatar name="Nickyzj" className="size-24 sm:size-28" />
+                <Avatar name="Nickyzj" size="size-24 sm:size-28" />
                 <div>
                     <span className="text-sm text-zinc-500 transition dark:text-zinc-400">nickyzj2019@qq.com</span>
                     <h1 className="my-0.5">杨智杰</h1>
