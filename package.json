@@ -11,12 +11,10 @@
         "danmaku": "^2.0.9",
         "dayjs": "^1.11.13",
         "medium-zoom": "^1.1.0",
-        "nanoid": "^5.1.5",
         "preact": "^10.26.5",
         "react-hot-toast": "^2.6.0",
         "react-use": "^17.6.0",
         "socket.io-client": "^4.8.1",
-        "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.4",
         "wouter-preact": "^3.7.1"
     },
