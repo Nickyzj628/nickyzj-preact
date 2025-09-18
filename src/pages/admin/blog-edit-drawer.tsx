@@ -5,7 +5,7 @@ import { to } from "@/helpers/network";
 import { useBlogMutation } from "@/hooks/store/use-blog";
 import { FormEvent } from "preact/compat";
 import { useMemo, useState } from "preact/hooks";
-import { toast } from "react-hot-toast";
+import { toast } from "react-hot-toast/headless";
 
 type Props = {
     data: Blog;

@@ -10,8 +10,9 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { render } from "preact";
 import { Suspense } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
-import { toast, Toaster } from "react-hot-toast";
+import { toast, ToastType, useToaster } from "react-hot-toast/headless";
 import { Link, Route, Switch } from "wouter-preact";
+import Alert, { AlertType } from "./components/alert";
 import Avatar from "./components/avatar";
 import Loading from "./components/loading";
 import Toggle from "./components/toggle";
@@ -234,6 +235,55 @@ const Footer = () => {
     );
 };
 
+const Toaster = () => {
+    const { toasts, handlers } = useToaster();
+    const { startPause, endPause, calculateOffset, updateHeight } = handlers;
+
+    const toastAlertTypeMap: Record<ToastType, AlertType> = {
+        success: "success",
+        error: "danger",
+        loading: "info",
+        blank: "info",
+        custom: "info",
+    };
+
+    return (
+        <div
+            className="fixed right-3 bottom-3 z-50 w-64"
+            onMouseEnter={startPause}
+            onMouseLeave={endPause}
+        >
+            {toasts.map((toast) => {
+                const offset = calculateOffset(toast, {
+                    gutter: 8,
+                });
+
+                const isHeightInited = !!toast.height;
+                const initHeight = (el: HTMLDivElement) => {
+                    if (el && typeof toast.height !== 'number') {
+                        const height = el.getBoundingClientRect().height;
+                        updateHeight(toast.id, height);
+                    }
+                };
+
+                return (
+                    <Alert
+                        key={toast.id}
+                        ref={initHeight}
+                        type={toastAlertTypeMap[toast.type]}
+                        title="提示"
+                        description={toast.message.toString()}
+                        className={clsx("absolute bottom-0 right-0 w-full", toast.visible ? "opacity-100" : "opacity-0")}
+                        style={{
+                            transform: `translateX(${toast.visible ? 0 : "100%"}) translateY(${isHeightInited ? -offset : 128}px)`,
+                        }}
+                    />
+                );
+            })}
+        </div>
+    );
+};
+
 const App = () => {
     return <>
         <div className="flex flex-col gap-3 min-h-screen p-3">
@@ -248,14 +298,7 @@ const App = () => {
             </div>
             <Footer />
         </div>
-        <Toaster
-            position="bottom-right"
-            toastOptions={{
-                style: {
-                    wordBreak: "break-word",
-                },
-            }}
-        />
+        <Toaster />
     </>;
 };
 

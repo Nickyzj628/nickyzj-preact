@@ -3,7 +3,7 @@ import { copyToClipboard } from "@/helpers/dom";
 import useUser from "@/hooks/store/use-user";
 import { FormEvent } from "preact/compat";
 import { useEffect, useRef, useState } from "preact/hooks";
-import { toast } from "react-hot-toast";
+import { toast } from "react-hot-toast/headless";
 import { useSearchParams } from "wouter-preact";
 import Badge, { BadgeType } from "../../components/badge";
 

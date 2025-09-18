@@ -3,7 +3,7 @@ import { getAnimeVideoByEp, to } from "@/helpers/network";
 import { throttle } from "@/helpers/time";
 import Danmaku from "danmaku/dist/esm/danmaku.dom.js";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
-import { toast } from "react-hot-toast";
+import { toast } from "react-hot-toast/headless";
 import { useSearchParams } from "wouter-preact";
 
 type Props = {
