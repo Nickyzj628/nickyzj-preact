@@ -11,9 +11,11 @@ import { render } from "preact";
 import { Suspense } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
 import { toast, ToastType, useToaster } from "react-hot-toast/headless";
-import { Link, Route, Switch } from "wouter-preact";
+import { useLocalStorage } from "react-use";
+import { Link, Route, Switch, useRoute } from "wouter-preact";
 import Alert, { AlertType } from "./components/alert";
 import Avatar from "./components/avatar";
+import Button from "./components/button";
 import Loading from "./components/loading";
 import Toggle from "./components/toggle";
 
@@ -71,61 +73,72 @@ const Header = () => {
             {!isMobile && (
                 <Link
                     href="/"
-                    className="flex items-center gap-1.5"
+                    className="flex items-center gap-1.5 text-xl tracking-wide transition dark:text-neutral-100"
                 >
                     <img
                         src="/favicon.webp"
                         alt="LOGO"
                         className="size-12"
                     />
-                    <span className="text-xl tracking-wide transition dark:text-neutral-200">
-                        NICKYZJ
-                    </span>
+                    NICKYZJ
                 </Link>
             )}
             {/* nav@mobile */}
             {isMobile && (
-                <div className="relative">
+                <div className="relative z-10">
+                    {/* trigger */}
                     <Toggle
-                        className="relative z-10"
                         value={isNavVisible}
+                        className="relative z-20"
                         onChange={setIsNavVisible}
                     />
+                    {/* global shade */}
                     <div
                         className={clsx(
-                            "fixed top-0 left-0 size-full bg-black/30 transition-all",
+                            "fixed top-0 left-0 size-full backdrop-blur-sm backdrop-brightness-75 transition-all",
                             !isNavVisible && "invisible opacity-0 pointer-events-none"
                         )}
+                        onClick={() => setIsNavVisible(false)}
                     />
-                    <div
-                        className={clsx(
-                            "absolute left-0 flex flex-col gap-3 w-10 transition-all",
-                            isNavVisible ? "top-16" : "invisible opacity-0 top-0 pointer-events-none"
-                        )}
-                    >
+                    {/* routes list */}
+                    <div className={clsx(
+                        "absolute left-0 flex flex-col gap-3 w-10 transition-all",
+                        isNavVisible ? "top-16" : "invisible opacity-0 top-0 pointer-events-none"
+                    )}>
                         {routes
                             .filter((route) => ROUTES_VISIBLE_AT_NAVBAR.includes(route.path) && route.accessible)
-                            .map((route) => (
-                                <Link
-                                    key={route.path}
-                                    href={route.path}
-                                    className={(active) => clsx("button", active && "opacity-60")}
-                                    onClick={() => setIsNavVisible(false)}
-                                >
-                                    <span className={clsx(route.icon, "size-5")} />
-                                </Link>
-                            ))
+                            .map((route) => {
+                                const [match] = useRoute(route.path === "/" ? "/" : `${route.path}/*?`);
+
+                                return (
+                                    <Link
+                                        key={route.path}
+                                        href={route.path}
+                                        onClick={() => setIsNavVisible(false)}
+                                    >
+                                        <Button
+                                            type={match ? "info" : "default"}
+                                            size="xl"
+                                            rounded="full"
+                                            icon={route.icon}
+                                        />
+                                    </Link>
+                                );
+                            })
                         }
                     </div>
                 </div>
             )}
             {/* user */}
             <div className="flex items-center gap-6">
-                <button onClick={onClickMessage}>
-                    <div className="icon-[mingcute--notification-line] size-5" />
-                </button>
+                <Button
+                    size="xl"
+                    rounded="full"
+                    icon="icon-[mingcute--notification-line]"
+                    onClick={onClickMessage}
+                />
                 <div className="divider" />
-                <button className="gap-1.5 p-0 bg-transparent hover:bg-transparent" onClick={onClickUser}>
+                <button className="flex items-center gap-1.5 dark:text-white" onClick={onClickUser}>
                     {!isMobile && user.name}
                     <Avatar size="xl" />
                 </button>
@@ -138,20 +151,18 @@ const Aside = () => {
     const isMobile = useIsMobile();
 
     // 手动切换侧边栏
-    const [isAsideFold, setIsAsideFold] = useState(Boolean(localStorage.getItem("isAsideFold")));
-    useEffect(() => {
-        localStorage.setItem("isAsideFold", isAsideFold ? "1" : "");
-    }, [isAsideFold]);
+    const [isAsideFold, setIsAsideFold] = useLocalStorage("isAsideFold", false);
 
     // 手动切换深色模式
-    const [isDark, setIsDark] = useState(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const DARK_MEDIA_QUERY = "(prefers-color-scheme: dark)";
+    const [isDark, setIsDark] = useState(window.matchMedia(DARK_MEDIA_QUERY).matches);
     useEffect(() => {
         document.documentElement.className = isDark ? "dark" : "";
     }, [isDark]);
 
     // 自动切换深色模式
     useEffect(() => {
-        window.matchMedia("(prefers-color-scheme: dark)").onchange = (e) => {
+        window.matchMedia(DARK_MEDIA_QUERY).onchange = (e) => {
             setIsDark(e.matches);
         };
     }, []);
@@ -161,49 +172,55 @@ const Aside = () => {
     }
 
     return (
-        <aside
-            className={clsx(
-                "bento flex flex-col justify-between w-16 rounded-xl transition-all",
-                !isAsideFold && "lg:w-36 xl:w-44",
-            )}
-        >
+        <aside className={clsx(
+            "bento flex flex-col justify-between w-18 rounded-xl transition-all",
+            isAsideFold ? "items-center" : "lg:w-36 xl:w-44",
+        )}>
             {/* routes */}
-            <nav
-                className={clsx(
-                    "sticky top-3 flex flex-col gap-2.5",
-                    !isAsideFold && "lg:gap-3.5",
-                )}
-            >
+            <nav className={clsx(
+                "sticky top-3 flex flex-col gap-2 w-full",
+                !isAsideFold && "lg:gap-3",
+            )}>
                 {routes
                     .filter((route) => ROUTES_VISIBLE_AT_NAVBAR.includes(route.path) && route.accessible)
-                    .map((route) => (
-                        <Link
-                            key={route.path}
-                            href={route.path}
-                            className={(active) => clsx(
-                                "button gap-1.5 whitespace-nowrap",
-                                !isAsideFold && "lg:rounded-xl",
-                                active ? "active" : "opacity-50 bg-transparent hover:opacity-100 hover:bg-neutral-200 dark:hover:bg-neutral-700",
-                            )}
-                        >
-                            <div className={clsx(route.icon, "shrink-0 size-5", !isAsideFold && "lg:size-6")} />
-                            <span className={clsx("hidden", !isAsideFold && "lg:inline")}>
-                                {route.title}
-                            </span>
-                        </Link>
-                    ))}
+                    .map((route) => {
+                        const [match] = useRoute(route.path === "/" ? "/" : `${route.path}/*?`);
+                        return (
+                            <Link href={route.path} key={route.path}>
+                                <Button
+                                    type={match ? "info" : "ghost"}
+                                    size="xl"
+                                    rounded={isAsideFold ? "full" : true}
+                                    icon={clsx(route.icon, "shrink-0")}
+                                    className={clsx("w-full !px-3 whitespace-nowrap")}
+                                >
+                                    {!isAsideFold && !isMobile && (
+                                        route.title
+                                    )}
+                                </Button>
+                            </Link>
+                        );
+                    })}
             </nav>
             {/* gadgets */}
-            <div className="sticky bottom-3 flex flex-wrap gap-3">
-                <button
-                    className={clsx("hidden lg:inline-flex", isAsideFold && "rotate-180")}
-                    onClick={() => setIsAsideFold(!isAsideFold)}
-                >
-                    <span className="icon-[mingcute--align-arrow-left-line] size-5" />
-                </button>
-                <button onClick={() => setIsDark(!isDark)}>
-                    <span className={clsx(isDark ? "icon-[mingcute--sun-line]" : "icon-[mingcute--moon-line]", "size-5")} />
-                </button>
+            <div className={clsx("sticky bottom-3 flex flex-wrap gap-3 w-full", isAsideFold && "justify-center")}>
+                {!isMobile && (
+                    <Button
+                        type={isAsideFold ? "ghost" : "info"}
+                        size="xl"
+                        rounded="full"
+                        icon="icon-[mingcute--align-arrow-left-line]"
+                        className={clsx(isAsideFold && "rotate-180")}
+                        onClick={() => setIsAsideFold(!isAsideFold)}
+                    />
+                )}
+                <Button
+                    type={isDark ? "info" : "ghost"}
+                    size="xl"
+                    rounded="full"
+                    icon={isDark ? "icon-[mingcute--sun-line]" : "icon-[mingcute--moon-line]"}
+                    onClick={() => setIsDark(!isDark)}
+                />
             </div>
         </aside>
     );
@@ -239,12 +256,12 @@ const Toaster = () => {
     const { toasts, handlers } = useToaster();
     const { startPause, endPause, calculateOffset, updateHeight } = handlers;
 
-    const toastAlertTypeMap: Record<ToastType, AlertType> = {
-        success: "success",
-        error: "danger",
-        loading: "info",
-        blank: "info",
-        custom: "info",
+    const toastAlertMap: Record<ToastType, [AlertType, string]> = {
+        success: ["success", "提示"],
+        error: ["danger", "错误"],
+        loading: ["info", "提示"],
+        blank: ["info", "提示"],
+        custom: ["info", "提示"],
     };
 
     return (
@@ -254,6 +271,7 @@ const Toaster = () => {
             onMouseLeave={endPause}
         >
             {toasts.map((toast) => {
+                const [type, title] = toastAlertMap[toast.type];
                 const offset = calculateOffset(toast, {
                     gutter: 8,
                 });
@@ -270,9 +288,9 @@ const Toaster = () => {
                     <Alert
                         key={toast.id}
                         ref={initHeight}
-                        type={toastAlertTypeMap[toast.type]}
-                        title="提示"
-                        description={toast.message.toString()}
+                        type={type}
+                        title={title}
+                        description={toast.message}
                         className={clsx("absolute bottom-0 right-0 w-full", toast.visible ? "opacity-100" : "opacity-0")}
                         style={{
                             transform: `translateX(${toast.visible ? 0 : "100%"}) translateY(${isHeightInited ? -offset : 128}px)`,

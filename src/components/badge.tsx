@@ -31,10 +31,10 @@ type Props = {
     rounded?: boolean;
     className?: string,
     /**
-     * 请传入 @iconify/tailwind4 插件支持的类名
+     * 请传入 @iconify/tailwind4 插件支持的类名，或 JSX 组件
      * @example "icon-[mingcute--align-arrow-left-line]"
      */
-    icon?: string;
+    icon?: string | ReactNode;
     children?: ReactNode,
     showClose?: boolean;
     onClose?: () => void;
@@ -67,6 +67,9 @@ const Badge = ({
     showClose = false,
     onClose = () => void 0,
 }: Props) => {
+    const isPresetIcon = icon && typeof icon === "string" && icon.startsWith("icon-");
+    const isCustomIcon = icon && !isPresetIcon;
+
     return (
         <span className={clsx(
             "inline-flex items-center gap-1 font-semibold transition",
@@ -75,12 +78,13 @@ const Badge = ({
             sizeMap[size]["wrapper"],
             className,
         )}>
-            {icon && (
+            {isPresetIcon && (
                 <span className={clsx(
                     icon,
                     sizeMap[size]["icon"],
                 )} />
             )}
+            {isCustomIcon && icon}
             {children}
             {showClose && (
                 <span

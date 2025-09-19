@@ -78,14 +78,14 @@ export const copyToClipboard = async (text: string) => {
         textarea.select();
 
         const done = document.execCommand("copy");
-        toast.success(done ? "复制到剪贴板成功" : "复制到剪贴板失败，请手动复制");
+        toast.success(done ? "复制成功" : "复制失败，请手动复制");
         document.body.removeChild(textarea);
     } else {
         const [error] = await to(navigator.clipboard.writeText(text));
         if (error) {
-            toast.error(`复制到剪贴板失败：${error.message}`);
+            toast.error(`复制失败：${error.message}`);
         } else {
-            toast.success("复制到剪贴板成功");
+            toast.success("复制成功");
         }
     }
 };

@@ -3,6 +3,7 @@ import { useAnimes } from "@/hooks/store/use-anime";
 import { useState } from "preact/hooks";
 import { useCounter } from "react-use";
 import AnimeEditDrawer from "./anime-edit-drawer";
+import Button from "@/components/button";
 
 const Animes = () => {
     const [page, { dec: prevPage, inc: nextPage }] = useCounter(1);
@@ -50,22 +51,25 @@ const Animes = () => {
                     )}
                     {animes.map((anime) => (
                         <tr key={anime.title} className="border-y border-neutral-300 transition-[border] hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800">
-                            <td className="px-1.5 py-0.5 duration-0">
+                            <td className="p-1.5 duration-0">
                                 {anime.title}
                             </td>
-                            <td className="px-1.5 py-0.5 duration-0">
+                            <td className="p-1.5 duration-0">
                                 {anime.season}
                             </td>
-                            <td className="px-1.5 py-0.5 duration-0">
+                            <td className="p-1.5 duration-0">
                                 {anime.eps}
                             </td>
-                            <td className="px-1.5 py-0.5 duration-0">
+                            <td className="p-1.5 duration-0">
                                 {new Date(anime.updated).toLocaleString()}
                             </td>
-                            <td className="px-1.5 py-0.5 duration-0">
-                                <button onClick={() => onClickEdit(anime)}>
-                                    <span className="icon-[mingcute--edit-line]" />
-                                </button>
+                            <td className="p-1.5 duration-0">
+                                <Button
+                                    size="lg"
+                                    rounded="full"
+                                    icon="icon-[mingcute--edit-line]"
+                                    onClick={() => onClickEdit(anime)}
+                                />
                             </td>
                         </tr>
                     ))}
@@ -75,21 +79,21 @@ const Animes = () => {
                 <span className="text-sm text-neutral-600 transition dark:text-neutral-300">
                     第{page}页 / 共{data?.pages}页
                 </span>
-                <div>
-                    <button
+                <div className="flex gap-1.5">
+                    <Button
+                        size="lg"
+                        rounded="full"
                         disabled={!hasPrevPage}
-                        className="px-3 py-1.5"
+                        icon="icon-[mingcute--left-line]"
                         onClick={() => prevPage()}
-                    >
-                        <span className="icon-[mingcute--left-line] size-6" />
-                    </button>
-                    <button
+                    />
+                    <Button
+                        size="lg"
+                        rounded="full"
                         disabled={!hasNextPage}
-                        className="px-3 py-1.5"
+                        icon="icon-[mingcute--left-line] rotate-180"
                         onClick={() => nextPage()}
-                    >
-                        <span className="icon-[mingcute--left-line] size-6 rotate-180" />
-                    </button>
+                    />
                 </div>
             </div>
             <AnimeEditDrawer

@@ -1,5 +1,5 @@
 import { clsx } from "@/helpers/string";
-import { CSSProperties, forwardRef } from "preact/compat";
+import { CSSProperties, forwardRef, ReactNode } from "preact/compat";
 import { MutableRef } from "preact/hooks";
 
 const typeMap = {
@@ -26,23 +26,42 @@ export type AlertType = Type;
 type Props = {
     type?: Type;
     title?: string;
-    description?: string;
-    actions?: { text: string, onClick: () => void }[];
+    description?: string | ReactNode;
     className?: string;
     style?: CSSProperties;
+    actions?: { text: string, onClick: () => void }[];
     showIcon?: boolean;
     showClose?: boolean;
     onClose?: () => void;
 };
 export type AlertProps = Props;
 
+/**
+ * 警告，功能和样式参考了 Sailboat UI
+ * @see https://sailboatui.com/docs/components/alert/
+ * @example
+ * <Alert
+ *     type="danger"
+ *     title="错误"
+ *     description="请求发送失败"
+ *     className="shadow-xl"
+ *     style={{ transform: "translateY(-8px)" }}
+ *     actions={[
+ *         { text: "好的", onClick: () => {} },
+ *         { text: "重试", onClick: () => {} },
+ *     ]}
+ *     showIcon={false}
+ *     showClose
+ *     onClose={() => void 0}
+ * />
+ */
 const Alert = forwardRef(({
     type = "info",
     title,
     description,
-    actions = [],
     className,
     style,
+    actions = [],
     showIcon = true,
     showClose = false,
     onClose = () => void 0,

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { toast } from "react-hot-toast/headless";
 import { useSearchParams } from "wouter-preact";
 import Badge, { BadgeType } from "../../components/badge";
+import Button from "@/components/button";
 
 const getBadgeInfo = (message: RoomMessage) => {
     const result = {
@@ -69,12 +70,9 @@ const Room = ({
             setIsInRoom(true);
             onChangeHost(true);
 
-            toast.success(<>
-                房间创建成功！
-                <span className="text-blue-500 cursor-pointer" onClick={() => copyToClipboard(window.location.href)}>
-                    点我复制链接到剪贴板
-                </span>
-            </>, { duration: 10000 });
+            toast.success(<button className="text-left" onClick={() => copyToClipboard(window.location.href)}>
+                房间创建成功！点击复制链接到剪贴板
+            </button>, { duration: 10000 });
         };
 
         const onRoomJoined = () => {
@@ -145,9 +143,9 @@ const Room = ({
     }, [messages]);
 
     if (!isInRoom) return (
-        <button className="w-full justify-center" onClick={onCreateRoom}>
+        <Button size="lg" className="w-full justify-center" onClick={onCreateRoom}>
             创建房间
-        </button>
+        </Button>
     );
 
     return <>

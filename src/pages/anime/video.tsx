@@ -225,7 +225,7 @@ const Video = ({
     return (
         <div
             ref={containerRef}
-            className="relative aspect-video w-full xl:flex-1 max-h-[80vh] rounded-xl bg-black"
+            className="relative aspect-video w-full xl:flex-1 rounded-xl"
         >
             <video
                 ref={videoRef}

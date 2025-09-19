@@ -1,3 +1,4 @@
+import Button from "@/components/button";
 import Drawer from "@/components/drawer";
 import ImageUploader from "@/components/image-uploader";
 import Input from "@/components/input";
@@ -71,13 +72,14 @@ const AnimeEditDrawer = ({ data, isOpen, onClose }: Props) => {
                         value={new Date(updated).toLocaleString()}
                     />
                 </div>
-                <button
-                    type="submit"
+                <Button
+                    size="lg"
+                    rounded="full"
                     disabled={isMutating}
                     className="justify-center w-full"
                 >
                     提交
-                </button>
+                </Button>
             </form>
         </Drawer>
     );

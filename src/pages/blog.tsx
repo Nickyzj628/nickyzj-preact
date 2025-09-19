@@ -1,4 +1,5 @@
 import "@/assets/hljs.css";
+import Button from "@/components/button";
 import Loading from "@/components/loading";
 import Toggle from "@/components/toggle";
 import { setTitle } from "@/helpers/dom";
@@ -141,11 +142,17 @@ const Page = () => {
                         );
                     })}
                 </div>
-                <Toggle value={isCatalogVisible} onChange={setIsCatalogVisible} />
+                <Toggle
+                    value={isCatalogVisible}
+                    onChange={setIsCatalogVisible}
+                />
                 {/* back top */}
-                <button onClick={() => window.scrollTo(0, 0)}>
-                    <span className="icon-[mingcute--align-arrow-left-line] size-5 rotate-90" />
-                </button>
+                <Button
+                    size="xl"
+                    rounded="full"
+                    icon="icon-[mingcute--align-arrow-left-line] rotate-90"
+                    onClick={() => window.scrollTo(0, 0)}
+                />
             </div >
         </>
     )

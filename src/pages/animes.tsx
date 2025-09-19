@@ -29,7 +29,7 @@ const Page = ({
 
     return (
         <>
-            <Section.Title className={clsx("col-span-full text-neutral-300", !isFirstPage && "mt-2")}>
+            <Section.Title className={clsx("col-span-full", isFirstPage ? "text-blue-300 dark:text-blue-600/60" : "mt-2 text-neutral-300 dark:text-neutral-600/60")}>
                 {season}
             </Section.Title>
             {isLoading && (

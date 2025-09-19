@@ -5,6 +5,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+    --spacing-18: 4.5rem;
+}
+
 @layer base {
     /* 滚动条 */
 
@@ -77,24 +81,7 @@
     }
 
     button {
-        @apply cursor-pointer;
-    }
-    
-    button,
-    .button {
-        @apply inline-flex items-center p-2.5;
-        @apply text-neutral-700;
-        @apply bg-neutral-100 rounded-full;
-        @apply cursor-pointer transition;
-        @apply hover:bg-neutral-200;
-        @apply active:scale-95;
-        @apply disabled:cursor-not-allowed disabled:opacity-50;
-        @apply dark:text-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700;
-    }
-
-    button.active,
-    .button.active {
-        @apply bg-neutral-200 dark:bg-neutral-700;
+        @apply outline-none cursor-pointer transition active:scale-95;
     }
 
     /* 水平分割线 */

@@ -73,7 +73,7 @@ Tabs.Trigger = ({ value, className, children }: TabsTriggerProps) => {
     return (
         <button
             className={clsx(
-                "flex-1 justify-center px-5 py-1.5 whitespace-nowrap rounded-xl",
+                "inline-flex flex-1 justify-center px-5 py-1.5 whitespace-nowrap rounded-xl transition dark:text-neutral-100",
                 isActive ? "bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-800" : "bg-transparent hover:bg-neutral-200 dark:hover:bg-neutral-800",
                 className,
             )}

@@ -6,15 +6,9 @@
  * clsx("flex items-center", true && "justify-between", false && "flex-1", null) // "flex items-center justify-between"
  */
 export const clsx = (...classNames: any[]) => {
-    const result: string[] = [];
-
-    for (const className of classNames) {
-        if (typeof className === "string") {
-            result.push(className);
-        }
-    }
-
-    return result.join(" ");
+    return classNames
+        .filter((className) => typeof className === "string" && className.length > 0)
+        .join(" ");
 };
 
 /**
