@@ -20,8 +20,8 @@ export default defineConfig(({ command }) => ({
         },
     },
     build: {
-        outDir: "./dist",
-        // outDir: "D:/nginx/html",
+        // outDir: "./dist",
+        outDir: "D:/nginx/html",
         emptyOutDir: true,
     },
 }));
