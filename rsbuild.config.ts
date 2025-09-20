@@ -32,7 +32,7 @@ export default defineConfig({
             css: "[name].css?v=[contenthash:8]",
         },
         distPath: {
-            root: "D:/nginx/html",
+            // root: "D:/nginx/html",
         },
         cleanDistPath: true,
     },
