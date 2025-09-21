@@ -132,7 +132,7 @@ const Header = () => {
             {/* user */}
             <div className="flex items-center gap-6">
                 <Button
-                    size="xl"
+                    size="lg"
                     rounded="full"
                     icon="icon-[mingcute--notification-line]"
                     onClick={onClickMessage}
