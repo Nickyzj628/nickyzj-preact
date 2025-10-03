@@ -72,7 +72,7 @@ export const useAnime = (season: string, title: string) => {
  */
 export const useAnimeMutation = (season: string, title: string) => {
     const [{ loading, error }, trigger] = useAsyncFn((data: Partial<AnimeMutationBody>) => {
-        return request(`/blogs/${season}/${title}`, {
+        return request(`/animes/${season}/${title}`, {
             method: "PUT",
             body: {
                 title,

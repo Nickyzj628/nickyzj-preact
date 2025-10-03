@@ -21,10 +21,10 @@ const Page = () => {
                     番剧
                 </Tabs.Trigger>
             </Tabs.List>
-            <Tabs.Content value={Tab.Blogs}>
+            <Tabs.Content value={Tab.Blogs} className="flex flex-1">
                 <Blogs />
             </Tabs.Content>
-            <Tabs.Content value={Tab.Animes}>
+            <Tabs.Content value={Tab.Animes} className="flex flex-1">
                 <Animes />
             </Tabs.Content>
         </Tabs>

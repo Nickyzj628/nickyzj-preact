@@ -32,6 +32,10 @@
     "pnpm": {
         "overrides": {
             "vite": "npm:rolldown-vite@latest"
-        }
+        },
+        "onlyBuiltDependencies": [
+            "@tailwindcss/oxide",
+            "esbuild"
+        ]
     }
 }
