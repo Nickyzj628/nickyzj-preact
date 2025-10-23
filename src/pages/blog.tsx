@@ -57,7 +57,7 @@ const Page = () => {
             return {
                 id,
                 text: header.slice(10 + id.length, -5),
-                style: { marginLeft: (level - baseLevel) * 8 },
+                style: { marginLeft: (level - baseLevel) * 12 },
             };
         });
     }, [data]);
@@ -97,7 +97,7 @@ console.log(`url(${getImage(`/Blogs/${data.title}.webp`)})`)
                     backgroundImage: `url(${getImage(`/Blogs/${data.title}.webp`)})`
                 }}
             >
-                <div className="absolute top-0 left-0 size-full rounded-xl backdrop-brightness-50 backdrop-blur-sm" />
+                <div className="absolute top-0 left-0 size-full rounded-xl backdrop-brightness-50 backdrop-blur-xs" />
             </div>
             <div className="relative flex flex-col items-center gap-0.5 w-full mt-8 sm:mt-16 mb-4 sm:mb-8 p-3">
                 <h1 className="mb-3 text-white text-balance text-center">
