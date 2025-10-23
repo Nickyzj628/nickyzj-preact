@@ -87,7 +87,7 @@ const Page = () => {
     if (error) return (
         <NotFound />
     );
-
+console.log(`url(${getImage(`/Blogs/${data.title}.webp`)})`)
     return (
         <>
             {/* banner */}
