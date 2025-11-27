@@ -4,11 +4,11 @@
 
 ### 安装
 
-`pnpm install`
+`bun install`
 
 ### 运行
 
-`pnpm dev`
+`bun run dev`
 
 ### 构建
 
@@ -16,4 +16,4 @@
 
 > package.json：`build`脚本中，`--emptyOutDir`参数会清空构建目录；
 
-`pnpm build`
+`bun run build`
