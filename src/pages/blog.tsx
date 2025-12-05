@@ -5,6 +5,7 @@ import Toggle from "@/components/toggle";
 import { setTitle } from "@/helpers/dom";
 import { getImage } from "@/helpers/network";
 import { clsx } from "@/helpers/string";
+import { fromNow } from "@/helpers/time";
 import { useEnsuredRef, useZoom } from "@/hooks/dom";
 import { useBlog } from "@/hooks/store/use-blog";
 import NotFound from "@/pages/not-found";
@@ -104,7 +105,7 @@ console.log(`url(${getImage(`/Blogs/${data.title}.webp`)})`)
                     {data.title}
                 </h1>
                 <span className="text-sm text-neutral-200">
-                    创建于{year}年
+                    创建于{new Date(data.created).toLocaleString()}
                 </span>
                 <span className="text-sm text-neutral-200">
                     全篇约{data.minutes ?? 0}分钟

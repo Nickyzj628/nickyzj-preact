@@ -83,9 +83,9 @@ const RecentAnimes = () => {
                                         <Figcaption.Title className="text-base line-clamp-2">
                                             {anime.title}
                                         </Figcaption.Title>
-                                        <Figcaption.Description>
+                                        {/*<Figcaption.Description>
                                             {`第${anime.eps}话`}
-                                        </Figcaption.Description>
+                                        </Figcaption.Description>*/}
                                     </Figcaption>
                                 </Figure>
                             </Link>

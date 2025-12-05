@@ -56,7 +56,7 @@ const RecentBlogs = () => {
                                 "text-sm transition",
                                 i === 0 ? "text-white" : "text-neutral-400 group-hover:text-white"
                             )}>
-                                {fromNow(blog.updated)}更新
+                                {fromNow(blog.created)}创建
                             </span>
                         </div>
                     </Link>

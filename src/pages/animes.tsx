@@ -49,9 +49,9 @@ const Page = ({
                             <Figcaption.Title className="text-base text-pretty">
                                 {anime.title}
                             </Figcaption.Title>
-                            <Figcaption.Description>
+                            {/*<Figcaption.Description>
                                 共{anime.eps}话
-                            </Figcaption.Description>
+                            </Figcaption.Description>*/}
                             <Figcaption.Extra>
                                 {fromNow(anime.updated)}更新
                             </Figcaption.Extra>

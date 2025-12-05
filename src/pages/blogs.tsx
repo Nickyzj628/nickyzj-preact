@@ -50,7 +50,7 @@ const Page = ({
                                 {blog.title}
                             </Figcaption.Title>
                             <Figcaption.Extra>
-                                {fromNow(blog.updated)}更新
+                                {fromNow(blog.created)}创建
                             </Figcaption.Extra>
                         </Figcaption>
                     </Figure>
